@@ -1,5 +1,5 @@
 {
-  "name": "svelte-theme-toggle",
+  "name": "svelte-theme-store",
   "type": "module",
   "version": "0.0.1",
   "svelte": "./dist/index.js",

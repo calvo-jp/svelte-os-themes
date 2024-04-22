@@ -1,2 +1,5 @@
-export { default as ThemeProvider } from './theme/theme-provider.svelte';
-export { default as useTheme } from './theme/use-theme.svelte.js';
+export {
+  createThemeStore,
+  type CreateThemeStoreConfig,
+  type CreateThemeStoreReturn,
+} from './create-theme-store.svelte.js';

@@ -4,7 +4,7 @@ interface Theme {
   colorScheme: 'light' | 'dark' | 'system';
 }
 
-export interface CreateThemeProps {
+export interface CreateThemeStoreConfig {
   themes?: Theme[];
   attribute?: 'class' | `data-${string}`;
   storageKey?: string;
@@ -12,9 +12,9 @@ export interface CreateThemeProps {
   nonce?: string;
 }
 
-export type CreateThemeReturn = ReturnType<typeof createTheme>;
+export type CreateThemeStoreReturn = ReturnType<typeof createThemeStore>;
 
-export function createTheme(props: CreateThemeProps) {
+export function createThemeStore(props: CreateThemeStoreConfig) {
   const {
     /**/
     themes,
@@ -38,7 +38,7 @@ export function createTheme(props: CreateThemeProps) {
     };
   });
 
-  let theme = $state<string | null>(null);
+  let theme = $state<string>(themes[0].value);
 
   return {
     get themes() {
@@ -59,7 +59,7 @@ export function createTheme(props: CreateThemeProps) {
     get theme() {
       return theme;
     },
-    set theme(value: string | null) {
+    set theme(value: string) {
       theme = value;
     },
   };

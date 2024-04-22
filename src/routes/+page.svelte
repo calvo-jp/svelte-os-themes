@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { useTheme } from '$lib/index.js';
-
-  let theme = useTheme();
+  function dataAttr(guard?: boolean) {
+    return guard ? '' : undefined;
+  }
 </script>
 
 <svelte:head>
