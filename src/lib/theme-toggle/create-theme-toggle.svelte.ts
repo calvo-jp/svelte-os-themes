@@ -64,7 +64,7 @@ function normalizeThemes(themes: Theme[] = []) {
         value: 'dark',
         colorScheme: 'dark',
       },
-    ] as Theme[];
+    ] satisfies Theme[];
   }
 
   return themes.map((o) => {

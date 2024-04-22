@@ -1,7 +1,6 @@
 <script lang="ts">
-  import '../app.css';
-
   import { ThemeToggleProvider } from '$lib/index.js';
+  import '../app.css';
 
   let { children } = $props();
 </script>

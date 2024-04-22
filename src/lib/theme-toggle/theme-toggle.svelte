@@ -9,8 +9,6 @@
 
   let { children }: Props = $props();
   let context = useThemeToggle();
-
-  $effect(() => {});
 </script>
 
 {@render children(context)}
