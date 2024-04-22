@@ -13,6 +13,22 @@
   let context = createThemeToggle(props);
 
   setContext('theme-toggle', context);
+
+  $effect.pre(() => {
+    const src = ``;
+
+    const script = document.createElement('script');
+
+    script.src = src;
+    script.async = true;
+    script.nonce = props.nonce;
+
+    document.head.appendChild(script);
+
+    return () => {
+      document.head.removeChild(script);
+    };
+  });
 </script>
 
 {#if children}
