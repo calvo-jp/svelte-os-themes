@@ -1,18 +1,15 @@
 <script lang="ts">
   import { setContext, type Snippet } from 'svelte';
-  import {
-    createThemeToggle,
-    type CreateThemeToggleProps,
-  } from './create-theme-toggle.svelte.js';
+  import { createTheme, type CreateThemeProps } from './create-theme.svelte.js';
 
   const darkModeQuery = '(prefers-color-scheme: dark)';
 
-  interface Props extends CreateThemeToggleProps {
+  interface Props extends CreateThemeProps {
     children?: Snippet;
   }
 
   let { children, ...props }: Props = $props();
-  let context = createThemeToggle(props);
+  let context = createTheme(props);
 
   $effect.pre(function assignCorrectTheme() {
     const localStorageValue = localStorage.getItem('theme');
@@ -35,7 +32,7 @@
     };
   });
 
-  setContext('svelte-theme-toggle/context', context);
+  setContext('context', context);
 </script>
 
 {#if children}

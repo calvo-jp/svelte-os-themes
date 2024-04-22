@@ -1,11 +1,11 @@
 <script lang="ts">
-  import { ThemeToggleProvider } from '$lib/index.js';
+  import { ThemeProvider } from '$lib/index.js';
   import '../app.css';
 
   let { children } = $props();
 </script>
 
-<ThemeToggleProvider
+<ThemeProvider
   themes={[
     {
       label: 'Hello Kitty',
@@ -25,4 +25,4 @@
   ]}
 >
   {@render children()}
-</ThemeToggleProvider>
+</ThemeProvider>

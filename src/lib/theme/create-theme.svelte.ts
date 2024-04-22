@@ -4,7 +4,7 @@ interface Theme {
   colorScheme: 'light' | 'dark' | 'system';
 }
 
-export interface CreateThemeToggleProps {
+export interface CreateThemeProps {
   themes?: Theme[];
   attribute?: 'class' | `data-${string}`;
   storageKey?: string;
@@ -12,10 +12,17 @@ export interface CreateThemeToggleProps {
   nonce?: string;
 }
 
-export type CreateThemeToggleReturn = ReturnType<typeof createThemeToggle>;
+export type CreateThemeReturn = ReturnType<typeof createTheme>;
 
-export function createThemeToggle(props: CreateThemeToggleProps) {
-  const config = $derived.by(() => {
+export function createTheme(props: CreateThemeProps) {
+  const {
+    /**/
+    themes,
+    attribute,
+    storageKey,
+    systemPreference,
+    nonce,
+  } = $derived.by(() => {
     const themes = normalizeThemes(props.themes);
     const attribute = props.attribute ?? 'class';
     const storageKey = props.storageKey ?? 'theme';
@@ -31,24 +38,36 @@ export function createThemeToggle(props: CreateThemeToggleProps) {
     };
   });
 
-  const theme = $state();
-
-  function setTheme() {}
+  let theme = $state<string | null>(null);
 
   return {
+    get themes() {
+      return themes;
+    },
+    get attribute() {
+      return attribute;
+    },
+    get storageKey() {
+      return storageKey;
+    },
+    get systemPreference() {
+      return systemPreference;
+    },
+    get nonce() {
+      return nonce;
+    },
     get theme() {
       return theme;
     },
-    setTheme,
-    get __config() {
-      return config;
+    set theme(value: string | null) {
+      theme = value;
     },
   };
 }
 
 function normalizeThemes(themes: Theme[] = []) {
   if (themes.length <= 0) {
-    return [
+    const defaultThemes: Theme[] = [
       {
         label: 'System',
         value: 'system',
@@ -64,7 +83,9 @@ function normalizeThemes(themes: Theme[] = []) {
         value: 'dark',
         colorScheme: 'dark',
       },
-    ] satisfies Theme[];
+    ];
+
+    return defaultThemes;
   }
 
   return themes.map((o) => {
