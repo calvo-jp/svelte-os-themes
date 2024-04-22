@@ -4,6 +4,7 @@
     createThemeToggle,
     type CreateThemeToggleProps,
   } from './create-theme-toggle.svelte.js';
+  import { DARK_MODE_QUERY } from './utils.js';
 
   interface Props extends CreateThemeToggleProps {
     children?: Snippet;
@@ -12,21 +13,26 @@
   let { children, ...props }: Props = $props();
   let context = createThemeToggle(props);
 
-  setContext('theme-toggle', context);
+  setContext('svelte-theme-toggle/context', context);
 
-  $effect.pre(() => {
-    const src = ``;
+  $effect.pre(function assignCorrectTheme() {
+    const localStorageValue = localStorage.getItem('theme');
+  });
 
-    const script = document.createElement('script');
+  $effect(function handleThemeChange() {
+    const html = document.documentElement;
+  });
 
-    script.src = src;
-    script.async = true;
-    script.nonce = props.nonce;
+  $effect(function watchThemeChanges() {
+    const html = document.documentElement;
+    const mediaQueryList = window.matchMedia(DARK_MODE_QUERY);
 
-    document.head.appendChild(script);
+    const handler = (e: MediaQueryListEvent) => {};
+
+    mediaQueryList.addEventListener('change', handler);
 
     return () => {
-      document.head.removeChild(script);
+      mediaQueryList.removeEventListener('change', handler);
     };
   });
 </script>

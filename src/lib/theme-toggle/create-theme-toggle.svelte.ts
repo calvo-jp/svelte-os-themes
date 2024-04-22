@@ -1,62 +1,39 @@
-export interface ThemeInput {
+interface Theme {
   label?: string;
   value: string;
-  colorScheme: string;
+  colorScheme: 'light' | 'dark' | 'system';
 }
 
 export interface CreateThemeToggleProps {
-  themes?: (ThemeInput | string)[];
-  defaultTheme?: string;
+  themes?: Theme[];
   attribute?: 'class' | `data-${string}`;
   storageKey?: string;
+  systemPreference?: boolean;
   nonce?: string;
 }
 
 export type CreateThemeToggleReturn = ReturnType<typeof createThemeToggle>;
 
-const defaultNonce = null;
-const defaultAttribute = 'class';
-const defaultStorageKey = 'theme';
-const defaultThemes = [
-  {
-    label: 'System',
-    value: 'system',
-    colorScheme: 'system',
-  },
-  {
-    label: 'Light',
-    value: 'light',
-    colorScheme: 'light',
-  },
-  {
-    label: 'Dark',
-    value: 'dark',
-    colorScheme: 'dark',
-  },
-];
-
 export function createThemeToggle(props: CreateThemeToggleProps) {
   const config = $derived.by(() => {
     const themes = normalizeThemes(props.themes);
-    const defaultTheme = props.defaultTheme ?? themes[0];
-    const attribute = props.attribute ?? defaultAttribute;
-    const storageKey = props.storageKey ?? defaultStorageKey;
-    const nonce = props.nonce ?? defaultNonce;
+    const attribute = props.attribute ?? 'class';
+    const storageKey = props.storageKey ?? 'theme';
+    const systemPreference = props.systemPreference ?? true;
+    const nonce = props.nonce ?? '';
 
     return {
       themes,
-      defaultTheme,
       attribute,
       storageKey,
+      systemPreference,
       nonce,
     };
   });
 
-  let theme = $state(config.defaultTheme);
+  const theme = $state();
 
-  function setTheme(value: string) {
-    theme = value;
-  }
+  function setTheme() {}
 
   return {
     get theme() {
@@ -69,22 +46,33 @@ export function createThemeToggle(props: CreateThemeToggleProps) {
   };
 }
 
-function normalizeThemes(themes: (ThemeInput | string)[] = []) {
-  if (themes.length <= 0) return defaultThemes;
+function normalizeThemes(themes: Theme[] = []) {
+  if (themes.length <= 0) {
+    return [
+      {
+        label: 'System',
+        value: 'system',
+        colorScheme: 'system',
+      },
+      {
+        label: 'Light',
+        value: 'light',
+        colorScheme: 'light',
+      },
+      {
+        label: 'Dark',
+        value: 'dark',
+        colorScheme: 'dark',
+      },
+    ] as Theme[];
+  }
 
-  return themes.map((theme) => {
-    if (typeof theme === 'string') {
-      return {
-        label: theme,
-        value: theme,
-        colorScheme: theme,
-      };
-    }
+  return themes.map((o) => {
+    const label = o.label ?? o.value;
 
     return {
-      label: theme.label ?? theme.value,
-      value: theme.value,
-      colorScheme: theme.colorScheme,
+      ...o,
+      label,
     };
   });
 }

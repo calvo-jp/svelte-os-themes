@@ -1,31 +1,16 @@
 <script lang="ts">
   import type { Snippet } from 'svelte';
-  import type { SvelteHTMLElements } from 'svelte/elements';
   import type { CreateThemeToggleReturn } from './create-theme-toggle.svelte.js';
-  import type { Assign } from './types.js';
   import useThemeToggle from './use-theme-toggle.svelte.js';
 
-  interface ThemeToggleProps {
+  interface Props {
     children: Snippet<[context: CreateThemeToggleReturn]>;
   }
 
-  interface Props
-    extends Assign<SvelteHTMLElements['button'], ThemeToggleProps> {}
-
-  let { children, onclick, ...props }: Props = $props();
+  let { children }: Props = $props();
   let context = useThemeToggle();
+
+  $effect(() => {});
 </script>
 
-<button
-  type="button"
-  onclick={(e) => {
-    onclick?.(e);
-
-    // TODO
-  }}
-  {...props}
->
-  {#if children}
-    {@render children(context)}
-  {/if}
-</button>
+{@render children(context)}

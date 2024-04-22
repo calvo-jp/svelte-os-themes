@@ -6,4 +6,6 @@
   <title>Svelte Theme Toggle</title>
 </svelte:head>
 
-<ThemeToggle></ThemeToggle>
+<ThemeToggle>
+  {#snippet children()}{/snippet}
+</ThemeToggle>
