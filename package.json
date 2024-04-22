@@ -1,0 +1,57 @@
+{
+  "name": "svelte-theme-toggle",
+  "type": "module",
+  "version": "0.0.1",
+  "svelte": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "svelte": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "!dist/**/*.test.*",
+    "!dist/**/*.spec.*"
+  ],
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build && npm run package",
+    "preview": "vite preview",
+    "package": "svelte-kit sync && svelte-package && publint",
+    "prepublishOnly": "npm run package",
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+    "test": "vitest",
+    "lint": "prettier --check . && eslint .",
+    "format": "prettier --write ."
+  },
+  "peerDependencies": {
+    "svelte": ">=5.0.0"
+  },
+  "devDependencies": {
+    "@sveltejs/adapter-vercel": "^5.3.0",
+    "@sveltejs/kit": "2.5.7",
+    "@sveltejs/package": "2.3.1",
+    "@sveltejs/vite-plugin-svelte": "3.1.0",
+    "@types/eslint": "8.56.10",
+    "@typescript-eslint/eslint-plugin": "7.7.0",
+    "@typescript-eslint/parser": "7.7.0",
+    "autoprefixer": "^10.4.19",
+    "eslint": "8.57.0",
+    "eslint-config-prettier": "9.1.0",
+    "eslint-plugin-svelte": "2.37.0",
+    "postcss": "^8.4.38",
+    "prettier": "3.2.5",
+    "prettier-plugin-svelte": "3.2.3",
+    "publint": "0.2.7",
+    "svelte": "5.0.0-next.110",
+    "svelte-check": "3.6.9",
+    "tailwindcss": "^3.4.3",
+    "tslib": "2.6.2",
+    "typescript": "5.4.5",
+    "vite": "5.2.10",
+    "vitest": "1.5.0"
+  }
+}
