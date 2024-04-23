@@ -195,7 +195,7 @@ function buildScript({
       '${storageKey}',
       '${attribute}',
       '${fallback}',
-      '${colorScheme}',
+      ${colorScheme},
     );
   </script>
   `;
