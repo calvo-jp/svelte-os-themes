@@ -1,5 +1,5 @@
 {
-  "name": "svelte-themes",
+  "name": "svelte-os-themes",
   "type": "module",
   "version": "0.0.1",
   "svelte": "./dist/index.js",
@@ -19,7 +19,10 @@
   "keywords": [
     "Svelte",
     "SvelteKit",
-    "theme"
+    "theme provider",
+    "theme",
+    "themes",
+    "dark mode"
   ],
   "repository": "https://github.com/calvo-jp/svelte-themes",
   "bugs": {

@@ -3,7 +3,7 @@
 ## Installation
 
 ```bash
-npm install svelte-themes
+npm install svelte-os-themes
 ```
 
 ## Usage
@@ -11,7 +11,7 @@ npm install svelte-themes
 ```svelte
 <!-- +layout.svelte -->
 <script>
-  import { ThemeProvider } from 'svelte-themes';
+  import { ThemeProvider } from 'svelte-os-themes';
 
   let { children } = $props();
 </script>
@@ -24,7 +24,7 @@ npm install svelte-themes
 ```svelte
 <!-- +page.svelte -->
 <script>
-  import { useTheme } from 'svelte-themes';
+  import { useTheme } from 'svelte-os-themes';
 
   let theme = useTheme();
 </script>
