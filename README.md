@@ -16,7 +16,14 @@ npm install svelte-os-themes
   let { children } = $props();
 </script>
 
-<ThemeProvider>
+<ThemeProvider
+  fallback="system"
+  attribute="class"
+  storageKey="theme"
+  colorScheme="true"
+  system="true"
+  nonce=""
+>
   {@render children()}
 </ThemeProvider>
 ```
