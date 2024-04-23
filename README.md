@@ -1,4 +1,4 @@
-# Svelte Themes
+# Svelte OS Themes
 
 ## Installation
 
