@@ -111,7 +111,7 @@ npm install svelte-os-themes
   The nonce to use for script.
 
   _accepted values:_ `<string>`<br/>
-  _default value:_ `''`
+  _default value:_
 
 ### useTheme
 

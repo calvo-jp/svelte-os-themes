@@ -22,9 +22,6 @@ export interface CreateThemeContextConfig {
    * @default true
    */
   colorScheme?: boolean;
-  /**
-   * @default ''
-   */
   nonce?: string;
 }
 
@@ -45,7 +42,7 @@ export function createThemeContext(config?: CreateThemeContextConfig) {
     const storageKey = config?.storageKey ?? 'theme';
     const colorScheme = config?.colorScheme ?? true;
     const system = config?.system ?? true;
-    const nonce = config?.nonce ?? '';
+    const nonce = config?.nonce;
 
     return {
       fallback,
@@ -75,11 +72,6 @@ export function createThemeContext(config?: CreateThemeContextConfig) {
     },
     themeChanged() {
       const html = document.documentElement;
-      const head = document.head;
-
-      const style = document.createElement('style');
-      style.innerHTML = noTransitionStyle;
-      head.appendChild(style);
 
       const originalTheme = theme;
       const resolvedTheme =
@@ -88,6 +80,8 @@ export function createThemeContext(config?: CreateThemeContextConfig) {
             ? 'dark'
             : 'light'
           : originalTheme;
+
+      html.classList.add('__no_transition__');
 
       if (attribute === 'class') {
         const removeClass = resolvedTheme === 'dark' ? 'light' : 'dark';
@@ -103,7 +97,7 @@ export function createThemeContext(config?: CreateThemeContextConfig) {
       localStorage.setItem(storageKey, originalTheme);
 
       setTimeout(() => {
-        head.removeChild(style);
+        html.classList.remove('__no_transition__');
       }, 1);
     },
     osThemeChanged() {
@@ -149,8 +143,25 @@ export function createThemeContext(config?: CreateThemeContextConfig) {
     get script() {
       return script;
     },
+    get style() {
+      return style;
+    },
   };
 }
+
+const style = `
+  <style>
+    .__no_transition__,
+    .__no_transition__ *,
+    .__no_transition__ *::after,
+    .__no_transition__ *::before {
+      -webkit-transition: none !important;
+      -moz-transition: none !important;
+      -o-transition: none !important;
+      transition: none !important;
+    }
+  </style>
+`;
 
 function buildScript({
   nonce,
@@ -159,14 +170,14 @@ function buildScript({
   storageKey,
   colorScheme,
 }: {
-  nonce: string;
+  nonce?: string;
   fallback: Theme;
   attribute: string;
   storageKey: string;
   colorScheme: boolean;
 }) {
   return `
-  <script nonce="${nonce}">
+  <script ${assignNonce(nonce)}>
     (function(k, a, f, c) {
       let h = document.documentElement;
       let q = window.matchMedia('(prefers-color-scheme: dark)')
@@ -201,5 +212,6 @@ function buildScript({
   `;
 }
 
-const noTransitionStyle =
-  '*,*::before,*::after{-webkit-transition:none!important;-moz-transition:none!important;-o-transition:none!important;transition:none!important;}';
+function assignNonce(nonce?: string) {
+  return nonce ? `nonce="${nonce}"` : '';
+}

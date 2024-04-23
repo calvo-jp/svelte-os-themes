@@ -23,6 +23,7 @@
 {@render children?.()}
 
 <svelte:head>
+  {@html context.style}
   {@html context.script}
 </svelte:head>
 

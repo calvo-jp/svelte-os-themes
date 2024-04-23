@@ -12,7 +12,7 @@
 <button
   type="button"
   class={cx(
-    'border h-11 w-full flex text-sm gap-2 items-center font-medium justify-center px-4 rounded transition-colors duration-200',
+    'border h-11 w-full flex text-sm gap-2 items-center font-medium justify-center px-4 rounded transition-colors duration-1000',
 
     'text-gray-600 border-gray-300',
     'data-selected:border-amber-500 data-selected:text-amber-500',
