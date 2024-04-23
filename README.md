@@ -1,5 +1,7 @@
 # Svelte OS Themes
 
+Easier theme switching for `Svelte` and `SvelteKit` apps.
+
 ## Installation
 
 ```bash
