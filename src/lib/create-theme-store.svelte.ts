@@ -38,10 +38,16 @@ export function createThemeStore(config?: Partial<CreateThemeStoreConfig>) {
         let h = document.documentElement;
         let q = window.matchMedia('(prefers-color-scheme: dark)')
         let s = localStorage.getItem(k)?.toLowerCase().trim();
-        let l = ['light', 'dark'];
-        let v = l.includes(v) ? v : 'system';
-        let t = v === 'system' ? q.matches ? 'dark' : 'light' : v;
+
+        let l = [
+          'dark',
+          'light',
+          'system'
+        ];
         
+        let v = l.includes(s) ? s : 'system';
+        let t = v === 'system' ? q.matches ? 'dark' : 'light' : v;
+
         if (a === 'class') {
           h.classList.remove(t === 'dark' ? 'light' : 'dark');
           h.classList.add(t);
@@ -57,7 +63,11 @@ export function createThemeStore(config?: Partial<CreateThemeStoreConfig>) {
       );
       `;
 
-      document.head.prepend(script);
+      document.head.appendChild(script);
+
+      return () => {
+        document.head.removeChild(script);
+      };
     });
 
     $effect.pre(function assignCorrectTheme() {
