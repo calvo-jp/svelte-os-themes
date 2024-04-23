@@ -20,8 +20,8 @@ npm install svelte-os-themes
   fallback="system"
   attribute="class"
   storageKey="theme"
-  colorScheme="true"
-  system="true"
+  colorScheme={true}
+  system={true}
   nonce=""
 >
   {@render children()}
