@@ -34,8 +34,6 @@ export function createThemeStore(config?: Partial<CreateThemeStoreConfig>) {
 
       script.async = true;
       script.nonce = nonce;
-
-      /* use this vscode extension for highlighting: Tobermory.es6-string-html */
       script.innerHTML = /* javascript */ `
         (function(){
           
@@ -54,20 +52,12 @@ export function createThemeStore(config?: Partial<CreateThemeStoreConfig>) {
     });
 
     $effect(function handleThemeChanges() {
+      const html = document.documentElement;
+      const head = document.head;
+
       const style = document.createElement('style');
-
-      style.innerHTML = /* css */ `
-        *, 
-        *::before, 
-        *::after {
-          -webkit-transition: none !important;
-          -moz-transition: none !important;
-          -o-transition: none !important;
-          transition: none !important;
-        }
-      `;
-
-      document.head.appendChild(style);
+      style.innerHTML = noTransitionStyle;
+      head.appendChild(style);
 
       const originalTheme = theme;
       const resolvedTheme =
@@ -80,17 +70,17 @@ export function createThemeStore(config?: Partial<CreateThemeStoreConfig>) {
       if (attribute === 'class') {
         const removeClass = resolvedTheme === 'dark' ? 'light' : 'dark';
 
-        document.documentElement.classList.remove(removeClass);
-        document.documentElement.classList.add(resolvedTheme);
+        html.classList.remove(removeClass);
+        html.classList.add(resolvedTheme);
       } else {
-        document.documentElement.setAttribute(attribute, resolvedTheme);
+        html.setAttribute(attribute, resolvedTheme);
       }
 
       localStorage.setItem(storageKey, originalTheme);
-      document.documentElement.style.colorScheme = resolvedTheme;
+      html.style.colorScheme = resolvedTheme;
 
       setTimeout(() => {
-        document.head.removeChild(style);
+        head.removeChild(style);
       }, 1);
     });
 
@@ -131,3 +121,6 @@ function parseTheme(value: string | null) {
   if (value?.toLocaleLowerCase().trim() === 'light') return 'light';
   return 'system';
 }
+
+const noTransitionStyle =
+  '*,*::before,*::after{-webkit-transition:none!important;-moz-transition:none!important;-o-transition:none!important;transition:none!important;}';
