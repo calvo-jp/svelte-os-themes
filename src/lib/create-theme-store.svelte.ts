@@ -3,7 +3,6 @@ type Theme = 'dark' | 'light' | 'system';
 interface CreateThemeStoreConfig {
   attribute?: 'class' | `data-${string}`;
   storageKey?: string;
-  colorScheme?: boolean;
   systemPreference?: boolean;
   nonce?: string;
 }
@@ -18,14 +17,12 @@ export function createThemeStore(config?: Partial<CreateThemeStoreConfig>) {
   } = $derived.by(() => {
     const attribute = config?.attribute ?? 'class';
     const storageKey = config?.storageKey ?? 'theme';
-    const colorScheme = config?.colorScheme ?? true;
     const systemPreference = config?.systemPreference ?? true;
     const nonce = config?.nonce ?? '';
 
     return {
       attribute,
       storageKey,
-      colorScheme,
       systemPreference,
       nonce,
     };
