@@ -12,5 +12,9 @@ test('parseTheme', () => {
   expect(parseTheme('light')).toBe('light');
   expect(parseTheme('system')).toBe('system');
 
+  expect(parseTheme(' Dark ')).toBe('dark');
+  expect(parseTheme(' Light ')).toBe('light');
+  expect(parseTheme(' System ')).toBe('system');
+
   expect(parseTheme('unknown')).toBeUndefined();
 });
