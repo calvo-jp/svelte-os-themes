@@ -1,9 +1,29 @@
 export type Theme = 'dark' | 'light' | 'system';
 
 export interface CreateThemeContextConfig {
+  /**
+   * @default 'system'
+   */
+  fallback?: Theme;
+  /**
+   * @default 'class'
+   */
   attribute?: 'class' | `data-${string}`;
+  /**
+   * @default 'theme'
+   */
   storageKey?: string;
-  systemPreference?: boolean;
+  /**
+   * @default true
+   */
+  system?: boolean;
+  /**
+   * @default true
+   */
+  colorScheme?: boolean;
+  /**
+   * @default ''
+   */
   nonce?: string;
 }
 
@@ -12,31 +32,39 @@ export type CreateThemeContextReturn = ReturnType<typeof createThemeContext>;
 export function createThemeContext(config?: CreateThemeContextConfig) {
   const {
     /**/
+    fallback,
     attribute,
     storageKey,
-    systemPreference,
+    colorScheme,
+    system,
     nonce,
   } = $derived.by(() => {
+    const fallback = config?.fallback ?? 'system';
     const attribute = config?.attribute ?? 'class';
     const storageKey = config?.storageKey ?? 'theme';
-    const systemPreference = config?.systemPreference ?? true;
+    const colorScheme = config?.colorScheme ?? true;
+    const system = config?.system ?? true;
     const nonce = config?.nonce ?? '';
 
     return {
+      fallback,
       attribute,
       storageKey,
-      systemPreference,
+      colorScheme,
+      system,
       nonce,
     };
   });
 
-  let theme = $state<Theme>('system');
+  let theme = $state<Theme>(fallback);
 
   const script = $derived(
     buildScript({
       nonce,
+      fallback,
       attribute,
       storageKey,
+      colorScheme,
     }),
   );
 
@@ -69,15 +97,16 @@ export function createThemeContext(config?: CreateThemeContextConfig) {
         html.setAttribute(attribute, resolvedTheme);
       }
 
+      if (colorScheme) html.style.colorScheme = resolvedTheme;
+
       localStorage.setItem(storageKey, originalTheme);
-      html.style.colorScheme = resolvedTheme;
 
       setTimeout(() => {
         head.removeChild(style);
       }, 1);
     },
     osThemeChanged() {
-      if (!systemPreference) return;
+      if (!system) return;
 
       const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
@@ -118,16 +147,20 @@ function getLocalStorageTheme(key: string): Theme {
 
 function buildScript({
   nonce,
+  fallback,
   attribute,
   storageKey,
+  colorScheme,
 }: {
   nonce: string;
+  fallback: Theme;
   attribute: string;
   storageKey: string;
+  colorScheme: boolean;
 }) {
   return `
   <script nonce="${nonce}">
-    (function(k, a) {
+    (function(k, a, f, c) {
       let h = document.documentElement;
       let q = window.matchMedia('(prefers-color-scheme: dark)')
       let s = localStorage.getItem(k)?.toLowerCase().trim();
@@ -138,7 +171,7 @@ function buildScript({
         'system'
       ];
 
-      let v = l.includes(s) ? s : 'system';
+      let v = l.includes(s) ? s : f;
       let t = v === 'system' ? q.matches ? 'dark' : 'light' : v;
 
       if (a === 'class') {
@@ -149,10 +182,13 @@ function buildScript({
       }
 
       localStorage.setItem(k, v);
-      h.style.colorScheme = t;
+
+      if (c) h.style.colorScheme = t;
     })(
       '${storageKey}',
       '${attribute}',
+      '${fallback}',
+      '${colorScheme}',
     );
   </script>
   `;
