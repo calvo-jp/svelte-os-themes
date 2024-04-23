@@ -1,5 +1,7 @@
 <script lang="ts">
-  import { themeStore } from './store.svelte.js';
+  import { useTheme } from '$lib/index.js';
+
+  let theme = useTheme();
 
   function dataAttr(guard?: boolean) {
     return guard ? '' : undefined;
@@ -29,30 +31,30 @@
   <button
     type="button"
     onclick={() => {
-      themeStore.theme = 'light';
+      theme.value = 'light';
     }}
     class={buttonStyle}
-    data-selected={dataAttr(themeStore.theme === 'light')}
+    data-selected={dataAttr(theme.value === 'light')}
   >
     Light
   </button>
   <button
     type="button"
     onclick={() => {
-      themeStore.theme = 'dark';
+      theme.value = 'dark';
     }}
     class={buttonStyle}
-    data-selected={dataAttr(themeStore.theme === 'dark')}
+    data-selected={dataAttr(theme.value === 'dark')}
   >
     Dark
   </button>
   <button
     type="button"
     onclick={() => {
-      themeStore.theme = 'system';
+      theme.value = 'system';
     }}
     class={buttonStyle}
-    data-selected={dataAttr(themeStore.theme === 'system')}
+    data-selected={dataAttr(theme.value === 'system')}
   >
     System
   </button>

@@ -1,11 +1,15 @@
-interface CreateThemeStoreConfig {
+export type Theme = 'dark' | 'light' | 'system';
+
+export interface CreateThemeContextConfig {
   attribute?: 'class' | `data-${string}`;
   storageKey?: string;
   systemPreference?: boolean;
   nonce?: string;
 }
 
-export function createThemeStore(config?: Partial<CreateThemeStoreConfig>) {
+export type CreateThemeContextReturn = ReturnType<typeof createThemeContext>;
+
+export function createThemeContext(config?: CreateThemeContextConfig) {
   const {
     /**/
     attribute,
@@ -26,55 +30,21 @@ export function createThemeStore(config?: Partial<CreateThemeStoreConfig>) {
     };
   });
 
-  let theme = $state<'dark' | 'light' | 'system'>('system');
+  let theme = $state<Theme>('system');
 
-  function init() {
-    $effect.pre(function assignThemeScript() {
-      const script = document.createElement('script');
+  const script = $derived(
+    buildScript({
+      nonce,
+      attribute,
+      storageKey,
+    }),
+  );
 
-      script.nonce = nonce;
-      script.innerHTML = `
-      (function(k, a) {
-        let h = document.documentElement;
-        let q = window.matchMedia('(prefers-color-scheme: dark)')
-        let s = localStorage.getItem(k)?.toLowerCase().trim();
-
-        let l = [
-          'dark',
-          'light',
-          'system'
-        ];
-        
-        let v = l.includes(s) ? s : 'system';
-        let t = v === 'system' ? q.matches ? 'dark' : 'light' : v;
-
-        if (a === 'class') {
-          h.classList.remove(t === 'dark' ? 'light' : 'dark');
-          h.classList.add(t);
-        } else {
-          h.setAttribute(a, t);
-        }
-
-        localStorage.setItem(k, v);
-        h.style.colorScheme = t;
-      })(
-        '${storageKey}',
-        '${attribute}',
-      );
-      `;
-
-      document.head.appendChild(script);
-
-      return () => {
-        document.head.removeChild(script);
-      };
-    });
-
-    $effect.pre(function assignCorrectTheme() {
-      theme = parseTheme(localStorage.getItem(storageKey));
-    });
-
-    $effect(function handleThemeChanges() {
+  const effects = $derived({
+    setup() {
+      theme = getLocalStorageTheme(storageKey);
+    },
+    themeChanged() {
       const html = document.documentElement;
       const head = document.head;
 
@@ -85,7 +55,7 @@ export function createThemeStore(config?: Partial<CreateThemeStoreConfig>) {
       const originalTheme = theme;
       const resolvedTheme =
         originalTheme === 'system'
-          ? matchMedia('(prefers-color-scheme: dark)').matches
+          ? window.matchMedia('(prefers-color-scheme: dark)').matches
             ? 'dark'
             : 'light'
           : originalTheme;
@@ -105,44 +75,85 @@ export function createThemeStore(config?: Partial<CreateThemeStoreConfig>) {
       setTimeout(() => {
         head.removeChild(style);
       }, 1);
-    });
-
-    $effect(function handleSystemPreference() {
+    },
+    osThemeChanged() {
       if (!systemPreference) return;
 
-      const mediaQuery = matchMedia('(prefers-color-scheme: dark)');
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
       function handler(e: MediaQueryListEvent) {
-        if (e.matches) {
-          theme = 'dark';
-        } else {
-          theme = 'light';
-        }
+        theme = e.matches ? 'dark' : 'light';
       }
 
       mediaQuery.addEventListener('change', handler);
 
-      return () => {
-        mediaQuery.removeEventListener('change', handler);
-      };
-    });
-  }
+      return () => mediaQuery.removeEventListener('change', handler);
+    },
+  });
 
   return {
     get theme() {
       return theme;
     },
-    set theme(value: 'dark' | 'light' | 'system') {
+    set theme(value: Theme) {
       theme = value;
     },
-    init,
+    get effects() {
+      return effects;
+    },
+    get script() {
+      return script;
+    },
   };
 }
 
-function parseTheme(value: string | null) {
+function getLocalStorageTheme(key: string): Theme {
+  const value = localStorage.getItem(key);
   if (value?.toLocaleLowerCase().trim() === 'dark') return 'dark';
   if (value?.toLocaleLowerCase().trim() === 'light') return 'light';
   return 'system';
+}
+
+function buildScript({
+  nonce,
+  attribute,
+  storageKey,
+}: {
+  nonce: string;
+  attribute: string;
+  storageKey: string;
+}) {
+  return `
+  <script nonce="${nonce}">
+    (function(k, a) {
+      let h = document.documentElement;
+      let q = window.matchMedia('(prefers-color-scheme: dark)')
+      let s = localStorage.getItem(k)?.toLowerCase().trim();
+  
+      let l = [
+        'dark',
+        'light',
+        'system'
+      ];
+  
+      let v = l.includes(s) ? s : 'system';
+      let t = v === 'system' ? q.matches ? 'dark' : 'light' : v;
+  
+      if (a === 'class') {
+        h.classList.remove(t === 'dark' ? 'light' : 'dark');
+        h.classList.add(t);
+      } else {
+        h.setAttribute(a, t);
+      }
+  
+      localStorage.setItem(k, v);
+      h.style.colorScheme = t;
+    })(
+      '${storageKey}',
+      '${attribute}',
+    );
+  </script>
+  `;
 }
 
 const noTransitionStyle =

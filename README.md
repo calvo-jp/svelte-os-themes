@@ -1,59 +1,58 @@
-# Svelte Theme Store
+# Svelte Themes
 
 ## Installation
 
 ```bash
-npm install svelte-theme-store
+npm install svelte-themes
 ```
 
 ## Usage
 
-- create a theme store
-
-```ts
-// lib/theme-store.svelte.ts
-import { createThemeStore } from 'svelte-theme-store';
-
-export const themeStore = createThemeStore();
-```
-
-- initialize
-
 ```svelte
 <!-- +layout.svelte -->
 <script>
-  import { themeStore } from '$lib/theme-store.svelte';
+  import { ThemeProvider } from 'svelte-themes';
 
-  themeStore.init();
+  let { children } = $props();
 </script>
-```
 
-- use store
+<ThemeProvider>
+  {@render children()}
+</ThemeProvider>
+```
 
 ```svelte
 <!-- +page.svelte -->
 <script>
-  import { themeStore } from '$lib/theme-store.svelte';
+  import { useTheme } from 'svelte-themes';
+
+  let theme = useTheme();
 </script>
 
 <button
+  type="button"
   onclick={function () {
-    themeStore.theme = 'light';
+    theme.value = 'light';
   }}
+  data-selected={theme.value === 'light'}
 >
   Light
 </button>
 <button
+  type="button"
   onclick={function () {
-    themeStore.theme = 'dark';
+    theme.value = 'dark';
   }}
+  data-selected={theme.value === 'dark'}
 >
   Dark
 </button>
 <button
+  type="button"
   onclick={function () {
-    themeStore.theme = 'system';
+    theme.value = 'system';
   }}
+  data-selected={theme.value === 'system'}
 >
   System
 </button>
