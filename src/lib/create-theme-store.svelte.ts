@@ -54,7 +54,20 @@ export function createThemeStore(config?: Partial<CreateThemeStoreConfig>) {
     });
 
     $effect(function handleThemeChanges() {
-      const reEnableTransitionStyles = disableTransitionStyles();
+      const style = document.createElement('style');
+
+      style.innerHTML = /* css */ `
+        *, 
+        *::before, 
+        *::after {
+          -webkit-transition: none !important;
+          -moz-transition: none !important;
+          -o-transition: none !important;
+          transition: none !important;
+        }
+      `;
+
+      document.head.appendChild(style);
 
       const originalTheme = theme;
       const resolvedTheme =
@@ -75,7 +88,10 @@ export function createThemeStore(config?: Partial<CreateThemeStoreConfig>) {
 
       localStorage.setItem(storageKey, originalTheme);
       document.documentElement.style.colorScheme = resolvedTheme;
-      reEnableTransitionStyles();
+
+      setTimeout(() => {
+        document.head.removeChild(style);
+      }, 1);
     });
 
     $effect(function handleSystemPreference() {
@@ -114,23 +130,4 @@ function parseTheme(value: string | null) {
   if (value?.toLocaleLowerCase().trim() === 'dark') return 'dark';
   if (value?.toLocaleLowerCase().trim() === 'light') return 'light';
   return 'system';
-}
-
-function disableTransitionStyles() {
-  const style = document.createElement('style');
-
-  style.innerHTML = /* css */ `
-    * {
-      -webkit-transition: none !important;
-      -moz-transition: none !important;
-      -o-transition: none !important;
-      transition: none !important;
-    }
-  `;
-
-  document.head.appendChild(style);
-
-  return function reEnableTransitionStyles() {
-    document.head.removeChild(style);
-  };
 }
