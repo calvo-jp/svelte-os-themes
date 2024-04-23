@@ -9,7 +9,7 @@ importers:
   .:
     devDependencies:
       '@sveltejs/adapter-vercel':
-        specifier: ^5.3.0
+        specifier: 5.3.0
         version: 5.3.0(@sveltejs/kit@2.5.7(@sveltejs/vite-plugin-svelte@3.1.0(svelte@5.0.0-next.112)(vite@5.2.10))(svelte@5.0.0-next.112)(vite@5.2.10))
       '@sveltejs/kit':
         specifier: 2.5.7
@@ -30,7 +30,7 @@ importers:
         specifier: 7.7.0
         version: 7.7.0(eslint@8.57.0)(typescript@5.4.5)
       autoprefixer:
-        specifier: ^10.4.19
+        specifier: 10.4.19
         version: 10.4.19(postcss@8.4.38)
       eslint:
         specifier: 8.57.0
@@ -42,7 +42,7 @@ importers:
         specifier: 2.37.0
         version: 2.37.0(eslint@8.57.0)(svelte@5.0.0-next.112)
       postcss:
-        specifier: ^8.4.38
+        specifier: 8.4.38
         version: 8.4.38
       prettier:
         specifier: 3.2.5
@@ -60,7 +60,7 @@ importers:
         specifier: 3.6.9
         version: 3.6.9(postcss-load-config@4.0.2(postcss@8.4.38))(postcss@8.4.38)(svelte@5.0.0-next.112)
       tailwindcss:
-        specifier: ^3.4.3
+        specifier: 3.4.3
         version: 3.4.3
       tslib:
         specifier: 2.6.2
