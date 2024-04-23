@@ -1,7 +1,7 @@
 {
   "name": "svelte-os-themes",
   "type": "module",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "svelte": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
