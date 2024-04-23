@@ -15,6 +15,7 @@
   $effect(context.effects.setup);
   $effect(context.effects.themeChanged);
   $effect(context.effects.osThemeChanged);
+  $effect(context.effects.storageChanged);
 
   setContext('theme', context);
 </script>

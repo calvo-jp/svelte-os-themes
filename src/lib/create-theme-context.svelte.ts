@@ -121,6 +121,19 @@ export function createThemeContext(config?: CreateThemeContextConfig) {
         mediaQuery.removeEventListener('change', handler);
       };
     },
+    storageChanged() {
+      function handler(e: StorageEvent) {
+        if (e.key === storageKey) {
+          theme = parseTheme(e.newValue, fallback);
+        }
+      }
+
+      window.addEventListener('storage', handler);
+
+      return () => {
+        window.removeEventListener('storage', handler);
+      };
+    },
   });
 
   return {
