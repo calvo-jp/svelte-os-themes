@@ -73,6 +73,8 @@ export function createThemeContext(config?: CreateThemeContextConfig) {
     themeChanged() {
       const html = document.documentElement;
 
+      html.classList.add('__no_transition__');
+
       const originalTheme = theme;
       const resolvedTheme =
         originalTheme === 'system'
@@ -80,8 +82,6 @@ export function createThemeContext(config?: CreateThemeContextConfig) {
             ? 'dark'
             : 'light'
           : originalTheme;
-
-      html.classList.add('__no_transition__');
 
       if (attribute === 'class') {
         const removeClass = resolvedTheme === 'dark' ? 'light' : 'dark';
