@@ -32,19 +32,32 @@ export function createThemeStore(config?: Partial<CreateThemeStoreConfig>) {
     $effect.pre(function assignThemeScript() {
       const script = document.createElement('script');
 
-      script.async = true;
       script.nonce = nonce;
-      script.innerHTML = /* javascript */ `
-        (function(){
-          
-        })();
+      script.innerHTML = `
+      (function(k, a) {
+        let h = document.documentElement;
+        let q = window.matchMedia('(prefers-color-scheme: dark)')
+        let s = localStorage.getItem(k)?.toLowerCase().trim();
+        let l = ['light', 'dark'];
+        let v = l.includes(v) ? v : 'system';
+        let t = v === 'system' ? q.matches ? 'dark' : 'light' : v;
+        
+        if (a === 'class') {
+          h.classList.remove(t === 'dark' ? 'light' : 'dark');
+          h.classList.add(t);
+        } else {
+          h.setAttribute(a, t);
+        }
+
+        localStorage.setItem(k, v);
+        h.style.colorScheme = t;
+      })(
+        '${storageKey}',
+        '${attribute}',
+      );
       `;
 
-      document.head.appendChild(script);
-
-      return () => {
-        document.head.removeChild(script);
-      };
+      document.head.prepend(script);
     });
 
     $effect.pre(function assignCorrectTheme() {
