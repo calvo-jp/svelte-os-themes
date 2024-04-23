@@ -24,9 +24,9 @@
     "themes",
     "dark mode"
   ],
-  "repository": "https://github.com/calvo-jp/svelte-themes",
+  "repository": "https://github.com/calvo-jp/svelte-os-themes",
   "bugs": {
-    "url": "https://github.com/calvo-jp/svelte-themes/issues"
+    "url": "https://github.com/calvo-jp/svelte-os-themes/issues"
   },
   "author": {
     "name": "John Paul Calvo",
