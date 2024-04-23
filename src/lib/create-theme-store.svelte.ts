@@ -32,9 +32,15 @@ export function createThemeStore(config?: Partial<CreateThemeStoreConfig>) {
     $effect.pre(function assignThemeScript() {
       const script = document.createElement('script');
 
-      script.nonce = nonce;
       script.async = true;
-      script.innerHTML = ``;
+      script.nonce = nonce;
+
+      /* use this vscode extension for highlighting: Tobermory.es6-string-html */
+      script.innerHTML = /* javascript */ `
+        (function(){
+          
+        })();
+      `;
 
       document.head.appendChild(script);
 
