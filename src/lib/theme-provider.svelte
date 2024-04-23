@@ -25,3 +25,27 @@
 <svelte:head>
   {@html context.script}
 </svelte:head>
+
+<!-- 
+  @component
+
+  @example
+  ```svelte
+  <script lang="ts">
+    import ThemeProvider from 'svelte-os-themes';
+
+    let { children } = $props();
+  </script>
+
+  <ThemeProvider
+    fallback="system"
+    attribute="class"
+    storageKey="theme"
+    colorScheme
+    system
+    nonce=""
+  >
+    {@render children()}
+  </ThemeProvider>
+  ```
+-->

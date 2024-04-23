@@ -4,6 +4,8 @@
   import { dataAttr } from './data-attr.js';
 
   let theme = useTheme();
+
+  $inspect(theme.value);
 </script>
 
 <svelte:head>
