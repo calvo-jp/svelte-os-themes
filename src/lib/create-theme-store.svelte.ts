@@ -1,5 +1,3 @@
-type Theme = 'dark' | 'light' | 'system';
-
 interface CreateThemeStoreConfig {
   attribute?: 'class' | `data-${string}`;
   storageKey?: string;
@@ -28,7 +26,7 @@ export function createThemeStore(config?: Partial<CreateThemeStoreConfig>) {
     };
   });
 
-  let theme = $state<Theme>('system');
+  let theme = $state<'dark' | 'light' | 'system'>('system');
 
   function init() {
     $effect.pre(function assignThemeScript() {
@@ -48,33 +46,33 @@ export function createThemeStore(config?: Partial<CreateThemeStoreConfig>) {
     $effect.pre(function assignCorrectTheme() {
       const storageTheme = parseTheme(localStorage.getItem(storageKey));
 
-      if (storageTheme) {
-        theme = storageTheme;
-      }
+      theme = storageTheme;
     });
 
     $effect(function handleThemeChanges() {
-      const root = document.documentElement;
+      const originalTheme = theme;
+      const resolvedTheme =
+        originalTheme === 'system'
+          ? matchMedia('(prefers-color-scheme: dark)').matches
+            ? 'dark'
+            : 'light'
+          : originalTheme;
 
-      if (theme === 'system') {
-        //
+      if (attribute === 'class') {
+        document.documentElement.classList.remove();
+        document.documentElement.classList.add(resolvedTheme);
       } else {
-        if (attribute === 'class') {
-          root.classList.remove();
-          root.classList.add(theme);
-        } else {
-          root.setAttribute(attribute, theme);
-        }
+        document.documentElement.setAttribute(attribute, resolvedTheme);
       }
 
-      localStorage.setItem(storageKey, theme);
-      root.style.colorScheme = theme;
+      localStorage.setItem(storageKey, originalTheme);
+      document.documentElement.style.colorScheme = resolvedTheme;
     });
 
     $effect(function handleSystemPreference() {
       if (!systemPreference) return;
 
-      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      const mediaQuery = matchMedia('(prefers-color-scheme: dark)');
 
       function handler(e: MediaQueryListEvent) {
         if (e.matches) {
@@ -96,7 +94,7 @@ export function createThemeStore(config?: Partial<CreateThemeStoreConfig>) {
     get theme() {
       return theme;
     },
-    set theme(value: Theme) {
+    set theme(value: 'dark' | 'light' | 'system') {
       theme = value;
     },
     init,
@@ -104,8 +102,7 @@ export function createThemeStore(config?: Partial<CreateThemeStoreConfig>) {
 }
 
 function parseTheme(value: string | null) {
-  if (value?.toLocaleLowerCase() === 'dark') return 'dark';
-  if (value?.toLocaleLowerCase() === 'light') return 'light';
-  if (value?.toLocaleLowerCase() === 'system') return 'system';
-  return null;
+  if (value?.toLocaleLowerCase().trim() === 'dark') return 'dark';
+  if (value?.toLocaleLowerCase().trim() === 'light') return 'light';
+  return 'system';
 }
