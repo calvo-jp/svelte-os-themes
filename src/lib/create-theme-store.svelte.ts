@@ -1,99 +1,114 @@
-interface Theme {
-  label?: string;
-  value: string;
-  colorScheme: 'light' | 'dark' | 'system';
-}
+type Theme = 'dark' | 'light' | 'system';
 
-export interface CreateThemeStoreConfig {
-  themes?: Theme[];
+interface CreateThemeStoreConfig {
   attribute?: 'class' | `data-${string}`;
   storageKey?: string;
+  colorScheme?: boolean;
   systemPreference?: boolean;
   nonce?: string;
 }
 
-export type CreateThemeStoreReturn = ReturnType<typeof createThemeStore>;
-
-export function createThemeStore(props: CreateThemeStoreConfig) {
+export function createThemeStore(config?: Partial<CreateThemeStoreConfig>) {
   const {
     /**/
-    themes,
     attribute,
     storageKey,
     systemPreference,
     nonce,
   } = $derived.by(() => {
-    const themes = normalizeThemes(props.themes);
-    const attribute = props.attribute ?? 'class';
-    const storageKey = props.storageKey ?? 'theme';
-    const systemPreference = props.systemPreference ?? true;
-    const nonce = props.nonce ?? '';
+    const attribute = config?.attribute ?? 'class';
+    const storageKey = config?.storageKey ?? 'theme';
+    const colorScheme = config?.colorScheme ?? true;
+    const systemPreference = config?.systemPreference ?? true;
+    const nonce = config?.nonce ?? '';
 
     return {
-      themes,
       attribute,
       storageKey,
+      colorScheme,
       systemPreference,
       nonce,
     };
   });
 
-  let theme = $state<string>(themes[0].value);
+  let theme = $state<Theme>('system');
+
+  function init() {
+    $effect.pre(function assignThemeScript() {
+      const script = document.createElement('script');
+
+      script.nonce = nonce;
+      script.async = true;
+      script.innerHTML = ``;
+
+      document.head.appendChild(script);
+
+      return () => {
+        document.head.removeChild(script);
+      };
+    });
+
+    $effect.pre(function assignCorrectTheme() {
+      const storageTheme = parseTheme(localStorage.getItem(storageKey));
+
+      if (storageTheme) {
+        theme = storageTheme;
+      }
+    });
+
+    $effect(function handleThemeChanges() {
+      const root = document.documentElement;
+
+      if (theme === 'system') {
+        //
+      } else {
+        if (attribute === 'class') {
+          root.classList.remove();
+          root.classList.add(theme);
+        } else {
+          root.setAttribute(attribute, theme);
+        }
+      }
+
+      localStorage.setItem(storageKey, theme);
+      root.style.colorScheme = theme;
+    });
+
+    $effect(function handleSystemPreference() {
+      if (!systemPreference) return;
+
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+      function handler(e: MediaQueryListEvent) {
+        if (e.matches) {
+          theme = 'dark';
+        } else {
+          theme = 'light';
+        }
+      }
+
+      mediaQuery.addEventListener('change', handler);
+
+      return () => {
+        mediaQuery.removeEventListener('change', handler);
+      };
+    });
+  }
 
   return {
-    get themes() {
-      return themes;
-    },
-    get attribute() {
-      return attribute;
-    },
-    get storageKey() {
-      return storageKey;
-    },
-    get systemPreference() {
-      return systemPreference;
-    },
-    get nonce() {
-      return nonce;
-    },
     get theme() {
       return theme;
     },
-    set theme(value: string) {
+    set theme(value: Theme) {
       theme = value;
     },
+    init,
   };
 }
 
-function normalizeThemes(themes: Theme[] = []) {
-  if (themes.length <= 0) {
-    const defaultThemes: Theme[] = [
-      {
-        label: 'System',
-        value: 'system',
-        colorScheme: 'system',
-      },
-      {
-        label: 'Light',
-        value: 'light',
-        colorScheme: 'light',
-      },
-      {
-        label: 'Dark',
-        value: 'dark',
-        colorScheme: 'dark',
-      },
-    ];
-
-    return defaultThemes;
-  }
-
-  return themes.map((o) => {
-    const label = o.label ?? o.value;
-
-    return {
-      ...o,
-      label,
-    };
-  });
+function parseTheme(value: string | null) {
+  if (value?.toLocaleLowerCase() === 'dark') return 'dark';
+  if (value?.toLocaleLowerCase() === 'light') return 'light';
+  if (value?.toLocaleLowerCase() === 'system') return 'system';
+  return null;
 }

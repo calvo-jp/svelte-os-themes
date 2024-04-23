@@ -1,28 +1,10 @@
 <script lang="ts">
-  import { createThemeStore } from '$lib/index.js';
   import '../app.css';
+  import { themeStore } from './store.svelte.js';
 
   let { children } = $props();
 
-  let store = createThemeStore({
-    themes: [
-      {
-        label: 'Hello Kitty',
-        value: 'pink',
-        colorScheme: 'light',
-      },
-      {
-        label: 'Sailor Moon',
-        value: 'yellow',
-        colorScheme: 'light',
-      },
-      {
-        label: 'Scooby Doo',
-        value: 'brown',
-        colorScheme: 'dark',
-      },
-    ],
-  });
+  themeStore.init();
 </script>
 
 {@render children()}
