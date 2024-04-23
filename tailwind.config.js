@@ -1,3 +1,5 @@
+import defaultTheme from 'tailwindcss/defaultTheme';
+
 /** @type {import('tailwindcss').Config} */
 export default {
   darkMode: 'class',
@@ -6,6 +8,10 @@ export default {
     extend: {
       data: {
         selected: 'selected',
+      },
+      fontFamily: {
+        sans: ["'Inter'", ...defaultTheme.fontFamily.sans],
+        mono: ["'Fira Code'", ...defaultTheme.fontFamily.mono],
       },
     },
   },
