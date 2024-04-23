@@ -1,4 +1,5 @@
-export type Theme = 'dark' | 'light' | 'system';
+import { parseTheme } from './parse-theme.js';
+import type { Theme } from './types.js';
 
 export interface CreateThemeContextConfig {
   /**
@@ -70,7 +71,7 @@ export function createThemeContext(config?: CreateThemeContextConfig) {
 
   const effects = $derived({
     setup() {
-      theme = getLocalStorageTheme(storageKey);
+      theme = parseTheme(localStorage.getItem(storageKey), fallback);
     },
     themeChanged() {
       const html = document.documentElement;
@@ -136,13 +137,6 @@ export function createThemeContext(config?: CreateThemeContextConfig) {
       return script;
     },
   };
-}
-
-function getLocalStorageTheme(key: string): Theme {
-  const value = localStorage.getItem(key);
-  if (value?.toLocaleLowerCase().trim() === 'dark') return 'dark';
-  if (value?.toLocaleLowerCase().trim() === 'light') return 'light';
-  return 'system';
 }
 
 function buildScript({

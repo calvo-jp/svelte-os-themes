@@ -64,5 +64,3 @@ npm install svelte-os-themes
   System
 </button>
 ```
-
-View demo [here](https://svelte-os-themes.vercel.app/)

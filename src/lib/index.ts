@@ -1,2 +1,3 @@
 export { default as ThemeProvider } from './theme-provider.svelte';
-export { default as useTheme } from './use-theme.svelte.js';
+export type { Theme } from './types.js';
+export { useTheme } from './use-theme.svelte.js';
