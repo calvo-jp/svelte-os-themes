@@ -182,18 +182,18 @@ function buildScript({
   return `
   <script ${assignNonce(nonce)}>
     (function(k, a, f, c) {
-      let h = document.documentElement;
-      let q = window.matchMedia('(prefers-color-scheme: dark)')
-      let s = localStorage.getItem(k)?.toLowerCase().trim();
+      const h = document.documentElement;
+      const q = window.matchMedia('(prefers-color-scheme: dark)')
+      const s = localStorage.getItem(k)?.toLowerCase().trim();
 
-      let l = [
+      const l = [
         'dark',
         'light',
         'system'
       ];
 
-      let v = l.includes(s) ? s : f;
-      let t = v === 'system' ? q.matches ? 'dark' : 'light' : v;
+      const v = l.includes(s) ? s : f;
+      const t = v === 'system' ? q.matches ? 'dark' : 'light' : v;
 
       if (a === 'class') {
         h.classList.remove(t === 'dark' ? 'light' : 'dark');
