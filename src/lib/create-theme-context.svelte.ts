@@ -69,7 +69,7 @@ export function createThemeContext(config?: CreateThemeContextConfig) {
 
   const effects = $derived({
     setup() {
-      theme = parseTheme(localStorage.getItem(storageKey), fallback);
+      theme = parseTheme(window.localStorage.getItem(storageKey), fallback);
     },
     themeChanged() {
       const html = document.documentElement;
@@ -95,7 +95,7 @@ export function createThemeContext(config?: CreateThemeContextConfig) {
 
       if (colorScheme) html.style.colorScheme = resolvedTheme;
 
-      localStorage.setItem(storageKey, originalTheme);
+      window.localStorage.setItem(storageKey, originalTheme);
 
       setTimeout(() => {
         html.classList.remove('svelte-os-themes__no-transition');
@@ -184,7 +184,7 @@ function buildScript({
     (function(k, a, f, c) {
       const h = document.documentElement;
       const q = window.matchMedia('(prefers-color-scheme: dark)')
-      const s = localStorage.getItem(k)?.toLowerCase().trim();
+      const s = window.localStorage.getItem(k)?.toLowerCase().trim();
 
       const l = [
         'dark',
@@ -202,7 +202,7 @@ function buildScript({
         h.setAttribute(a, t);
       }
 
-      localStorage.setItem(k, v);
+      window.localStorage.setItem(k, v);
 
       if (c) h.style.colorScheme = t;
     })(
