@@ -75,43 +75,43 @@ npm install svelte-os-themes
 
   The default theme to use when no theme is set in storage.
 
-  _accepted values:_ `'light'`, `'dark'`, `'system'`<br/>
-  _default value:_ `'system'`
+  accepted values: `'light'`, `'dark'`, `'system'`<br/>
+  default value: `'system'`
 
 - `attribute`
 
   The attribute to set on the `html` element.
 
-  _accepted values:_ `'class'`, `'data-<string>'`<br/>
-  _default value:_ `'class'`
+  accepted values: `'class'`, `'data-<string>'`<br/>
+  default value: `'class'`
 
 - `storageKey`
 
   The key to use when storing the theme in `localStorage`.
 
-  _accepted values:_ `<string>`<br/>
-  _default value:_ `'theme'`
+  accepted values: `<string>`<br/>
+  default value: `'theme'`
 
 - `system`
 
   Whether to change theme when os theme changes.
 
-  _accepted values:_ `true`, `false`<br/>
-  _default value:_ `true`
+  accepted values: `true`, `false`<br/>
+  default value: `true`
 
 - `colorScheme`
 
   Whether to add/update the `html`'s `color-scheme`.
 
-  _accepted values:_ `true`, `false`<br/>
-  _default value:_ `true`
+  accepted values: `true`, `false`<br/>
+  default value: `true`
 
 - `nonce`
 
   The nonce to use for script.
 
-  _accepted values:_ `<string>`<br/>
-  _default value:_
+  accepted values: `<string>`<br/>
+  default value:
 
 ### useTheme
 
