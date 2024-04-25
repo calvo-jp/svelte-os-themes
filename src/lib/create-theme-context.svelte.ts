@@ -74,7 +74,7 @@ export function createThemeContext(config?: CreateThemeContextConfig) {
     themeChanged() {
       const html = document.documentElement;
 
-      html.classList.add('__no_transition__');
+      html.classList.add('svelte-os-themes__no-transition');
 
       const originalTheme = theme;
       const resolvedTheme =
@@ -98,7 +98,7 @@ export function createThemeContext(config?: CreateThemeContextConfig) {
       localStorage.setItem(storageKey, originalTheme);
 
       setTimeout(() => {
-        html.classList.remove('__no_transition__');
+        html.classList.remove('svelte-os-themes__no-transition');
       }, 1);
     },
     osThemeChanged() {
@@ -153,10 +153,10 @@ export function createThemeContext(config?: CreateThemeContextConfig) {
 function buildStyle({ nonce }: { nonce?: string }) {
   return `
   <style ${assignNonce(nonce)}>
-    .__no_transition__,
-    .__no_transition__ *,
-    .__no_transition__ *::after,
-    .__no_transition__ *::before {
+    .svelte-os-themes__no-transition,
+    .svelte-os-themes__no-transition *,
+    .svelte-os-themes__no-transition *::after,
+    .svelte-os-themes__no-transition *::before {
       -webkit-transition: none !important;
       -moz-transition: none !important;
       -o-transition: none !important;
