@@ -56,6 +56,7 @@ export function createThemeContext(config?: CreateThemeContextConfig) {
 
   let theme = $state<Theme>(fallback);
 
+  const style = $derived(buildStyle({ nonce }));
   const script = $derived(
     buildScript({
       nonce,
@@ -149,8 +150,9 @@ export function createThemeContext(config?: CreateThemeContextConfig) {
   };
 }
 
-const style = `
-  <style>
+function buildStyle({ nonce }: { nonce?: string }) {
+  return `
+  <style ${assignNonce(nonce)}>
     .__no_transition__,
     .__no_transition__ *,
     .__no_transition__ *::after,
@@ -161,7 +163,8 @@ const style = `
       transition: none !important;
     }
   </style>
-`;
+  `;
+}
 
 function buildScript({
   nonce,
