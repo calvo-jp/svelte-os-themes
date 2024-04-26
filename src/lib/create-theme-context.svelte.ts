@@ -102,7 +102,7 @@ export function createThemeContext(config?: CreateThemeContextConfig) {
       }, 1);
     },
     osThemeChanged() {
-      if (!system) return;
+      if (!system) return function noop() {};
 
       const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
