@@ -33,6 +33,7 @@
     "name": "John Paul Calvo",
     "email": "calvojp92@gmail.com"
   },
+  "packageManager": "pnpm@9.4.0",
   "scripts": {
     "dev": "vite dev",
     "build": "vite build && npm run package",
