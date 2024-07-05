@@ -1,5 +1,6 @@
 import { getContext } from 'svelte';
 import type { CreateThemeContextReturn } from './create-theme-context.svelte.js';
+import { parseTheme } from './parse-theme.js';
 import type { Theme } from './types.js';
 
 /**
@@ -43,12 +44,16 @@ export function useTheme() {
   const context = getContext<CreateThemeContextReturn>('theme');
 
   return {
-    get value() {
+    get value(): Theme {
       return context.theme;
     },
-    set value(theme: Theme) {
+    set value(theme: Theme | (string & {})) {
       if (context) {
-        context.theme = theme;
+        const v = parseTheme(theme);
+
+        if (v) {
+          context.theme = v;
+        }
       }
     },
   };
