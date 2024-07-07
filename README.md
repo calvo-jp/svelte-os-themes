@@ -1,6 +1,6 @@
 # Svelte OS Themes
 
-Easier theme switching for `Svelte` and `SvelteKit` apps.
+Easier theme switching for `Svelte` apps.
 
 ## Installation
 
