@@ -120,3 +120,13 @@ npm install svelte-os-themes
 - `value`
 
   Returns the current theme when used as a getter and sets the theme when used as a setter.
+
+### parseTheme
+
+`parseTheme` is a helper function that parses any value into a valid theme. See example below
+
+```js
+console.log(parseTheme('LIGHT')); // 'light'
+console.log(parseTheme('invalid')); // undefined
+console.log(parseTheme('invalid', 'dark')); // 'dark'
+```
