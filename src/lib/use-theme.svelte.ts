@@ -47,7 +47,7 @@ export function useTheme() {
     get value(): Theme {
       return context.theme;
     },
-    set value(theme: Theme | (string & {})) {
+    set value(theme: Theme | null | undefined) {
       if (context) {
         const v = parseTheme(theme);
 

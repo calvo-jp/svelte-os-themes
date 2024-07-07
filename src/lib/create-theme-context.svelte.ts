@@ -132,11 +132,11 @@ export function createThemeContext(config?: CreateThemeContextConfig) {
   });
 
   return {
-    get theme() {
+    get theme(): Theme {
       return theme;
     },
-    set theme(value: Theme) {
-      theme = value;
+    set theme(value: Theme | null | undefined) {
+      theme = value ?? fallback;
     },
     get effects() {
       return effects;
