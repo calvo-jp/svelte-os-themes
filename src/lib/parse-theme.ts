@@ -1,5 +1,15 @@
 import type { Theme } from './types.js';
 
+/**
+ * Parses string to theme
+ *
+ * @example
+ * ```ts
+ * console.log(parseTheme('LIGHT')); // 'light'
+ * console.log(parseTheme('invalid')); // undefined
+ * console.log(parseTheme('invalid', 'dark')); // 'dark'
+ * ```
+ */
 export function parseTheme(value: unknown, fallback: Theme): Theme;
 export function parseTheme(value: unknown): Theme | undefined;
 export function parseTheme(value: unknown, fallback?: Theme) {
