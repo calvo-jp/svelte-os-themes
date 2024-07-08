@@ -5,6 +5,12 @@
   "version": "0.4.1",
   "svelte": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "svelte": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "files": [
     "dist",
     "!dist/**/*.test.*",
