@@ -8,6 +8,6 @@ export default defineConfig({
   },
   test: {
     watch: false,
-    include: ['src/**/*.{test,spec}.{js,ts}'],
+    include: ['src/tests/**/*.{test,spec}.{js,ts}'],
   },
 });
