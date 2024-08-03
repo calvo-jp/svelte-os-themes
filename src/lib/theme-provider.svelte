@@ -1,3 +1,5 @@
+<svelte:options css="injected" />
+
 <script lang="ts">
   import { setContext, type Snippet } from 'svelte';
   import {
