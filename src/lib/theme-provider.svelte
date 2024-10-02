@@ -1,54 +1,27 @@
-<svelte:options css="injected" />
+<script lang="ts" module>
+  import type {CreateThemeProps, CreateThemeReturn} from './create-theme.svelte.js';
 
-<script lang="ts">
-  import { setContext, type Snippet } from 'svelte';
-  import {
-    createThemeContext,
-    type CreateThemeContextConfig,
-  } from './create-theme-context.svelte.js';
-
-  interface Props extends CreateThemeContextConfig {
-    children?: Snippet;
+  export interface ThemeProviderProps extends CreateThemeProps {
+    children?: Snippet<[CreateThemeReturn]>;
   }
-
-  let { children, ...props }: Props = $props();
-  let context = createThemeContext(props);
-
-  $effect(context.effects.setup);
-  $effect(context.effects.themeChanged);
-  $effect(context.effects.osThemeChanged);
-  $effect(context.effects.storageChanged);
-
-  setContext('theme', context);
 </script>
 
-{@render children?.()}
+<script lang="ts">
+  import {setContext, type Snippet} from 'svelte';
+  import {createTheme} from './create-theme.svelte.js';
+
+  let {children, ...props}: ThemeProviderProps = $props();
+
+  let theme = createTheme(props);
+  let script = createTheme.buildScript(props);
+  let style = createTheme.buildStyle(props);
+
+  setContext('theme', theme);
+</script>
+
+{@render children?.(theme)}
 
 <svelte:head>
-  {@html context.style}
-  {@html context.script}
+  {@html style.current}
+  {@html script.current}
 </svelte:head>
-
-<!-- 
-  @component
-
-  @example
-  ```svelte
-  <script lang="ts">
-    import ThemeProvider from 'svelte-os-themes';
-
-    let { children } = $props();
-  </script>
-
-  <ThemeProvider
-    fallback="system"
-    attribute="class"
-    storageKey="theme"
-    colorScheme
-    system
-    nonce=""
-  >
-    {@render children()}
-  </ThemeProvider>
-  ```
--->

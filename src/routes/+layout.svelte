@@ -2,7 +2,7 @@
   import ThemeProvider from '$lib/theme-provider.svelte';
   import '../app.css';
 
-  let { children } = $props();
+  let {children} = $props();
 </script>
 
 <ThemeProvider>

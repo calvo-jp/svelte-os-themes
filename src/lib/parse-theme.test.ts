@@ -1,5 +1,5 @@
-import { expect, test } from 'vitest';
-import { parseTheme } from './parse-theme.js';
+import {expect, test} from 'vitest';
+import {parseTheme} from './parse-theme.js';
 
 test('parseTheme', () => {
   expect(parseTheme(0, 'system')).toBe('system');

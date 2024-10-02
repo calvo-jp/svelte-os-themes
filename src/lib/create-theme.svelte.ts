@@ -1,75 +1,45 @@
-import { parseTheme } from './parse-theme.js';
-import type { Theme } from './types.js';
+import type {HTMLButtonAttributes} from 'svelte/elements';
+import {parseTheme} from './parse-theme.js';
+import type {Theme} from './types.js';
 
-export interface CreateThemeContextConfig {
-  /**
-   * @default 'system'
-   */
+export interface CreateThemeProps {
   fallback?: Theme;
-  /**
-   * @default 'class'
-   */
   attribute?: 'class' | `data-${string}`;
-  /**
-   * @default 'theme'
-   */
   storageKey?: string;
-  /**
-   * @default true
-   */
   system?: boolean;
-  /**
-   * @default true
-   */
   colorScheme?: boolean;
   nonce?: string;
 }
 
-export type CreateThemeContextReturn = ReturnType<typeof createThemeContext>;
+interface TriggerProps {
+  value: Theme;
+}
 
-export function createThemeContext(config?: CreateThemeContextConfig) {
-  const {
-    /**/
-    fallback,
-    attribute,
-    storageKey,
-    colorScheme,
-    system,
-    nonce,
-  } = $derived.by(() => {
-    const fallback = config?.fallback ?? 'system';
-    const attribute = config?.attribute ?? 'class';
-    const storageKey = config?.storageKey ?? 'theme';
-    const colorScheme = config?.colorScheme ?? true;
-    const system = config?.system ?? true;
-    const nonce = config?.nonce;
+export interface CreateThemeReturn {
+  get value(): Theme;
+  set value(value: Theme | null | undefined);
+  getTriggerProps(props: TriggerProps): HTMLButtonAttributes;
+}
 
-    return {
-      fallback,
-      attribute,
-      storageKey,
-      colorScheme,
-      system,
-      nonce,
-    };
+const defaultProps = {
+  fallback: 'system',
+  attribute: 'class',
+  storageKey: 'theme',
+  system: true,
+  colorScheme: true,
+} satisfies CreateThemeProps;
+
+export function createTheme(props: CreateThemeProps): CreateThemeReturn {
+  const config = $derived({
+    ...defaultProps,
+    ...props,
   });
 
-  let theme = $state<Theme>(fallback);
-
-  const style = $derived(buildStyle({ nonce }));
-  const script = $derived(
-    buildScript({
-      nonce,
-      fallback,
-      attribute,
-      storageKey,
-      colorScheme,
-    }),
-  );
+  let theme = $state<Theme>(config.fallback);
 
   const effects = $derived({
     setup() {
-      theme = parseTheme(window.localStorage.getItem(storageKey), fallback);
+      theme = parseTheme(window.localStorage.getItem(config.storageKey), config.fallback);
     },
     themeChanged() {
       const html = document.documentElement;
@@ -84,25 +54,25 @@ export function createThemeContext(config?: CreateThemeContextConfig) {
             : 'light'
           : originalTheme;
 
-      if (attribute === 'class') {
+      if (config.attribute === 'class') {
         const removeClass = resolvedTheme === 'dark' ? 'light' : 'dark';
 
         html.classList.remove(removeClass);
         html.classList.add(resolvedTheme);
       } else {
-        html.setAttribute(attribute, resolvedTheme);
+        html.setAttribute(config.attribute, resolvedTheme);
       }
 
-      if (colorScheme) html.style.colorScheme = resolvedTheme;
+      if (config.colorScheme) html.style.colorScheme = resolvedTheme;
 
-      window.localStorage.setItem(storageKey, originalTheme);
+      window.localStorage.setItem(config.storageKey, originalTheme);
 
       setTimeout(() => {
         html.classList.remove('svelte-os-themes__no-transition');
       }, 1);
     },
     osThemeChanged() {
-      if (!system) return function noop() {};
+      if (!config.system) return function noop() {};
 
       const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
@@ -118,8 +88,8 @@ export function createThemeContext(config?: CreateThemeContextConfig) {
     },
     storageChanged() {
       function handler(e: StorageEvent) {
-        if (e.key === storageKey) {
-          theme = parseTheme(e.newValue, fallback);
+        if (e.key === config.storageKey) {
+          theme = parseTheme(e.newValue, config.fallback);
         }
       }
 
@@ -131,28 +101,46 @@ export function createThemeContext(config?: CreateThemeContextConfig) {
     },
   });
 
+  $effect(effects.setup);
+  $effect(effects.themeChanged);
+  $effect(effects.osThemeChanged);
+  $effect(effects.storageChanged);
+
+  function getTriggerProps(props: TriggerProps): HTMLButtonAttributes {
+    return {
+      type: 'button',
+      onclick() {
+        if (theme === props.value) return;
+        theme = props.value;
+      },
+      'aria-label': 'Enable %s mode'.replace('%s', props.value),
+      'data-state': theme === props.value ? 'on' : 'off',
+    };
+  }
+
   return {
-    get theme(): Theme {
+    get value(): Theme {
       return theme;
     },
-    set theme(value: Theme | null | undefined) {
-      theme = value ?? fallback;
+    set value(newTheme: Theme | null | undefined) {
+      if (newTheme) {
+        theme = newTheme;
+      } else {
+        theme = config.fallback;
+      }
     },
-    get effects() {
-      return effects;
-    },
-    get script() {
-      return script;
-    },
-    get style() {
-      return style;
-    },
+    getTriggerProps,
   };
 }
 
-function buildStyle({ nonce }: { nonce?: string }) {
-  return `
-  <style ${assignNonce(nonce)}>
+createTheme.buildStyle = function (props: CreateThemeProps) {
+  const config = $derived({
+    ...defaultProps,
+    ...props,
+  });
+
+  const current = $derived(`
+  <style ${assignNonce(config.nonce)}>
     .svelte-os-themes__no-transition,
     .svelte-os-themes__no-transition *,
     .svelte-os-themes__no-transition *::after,
@@ -163,24 +151,23 @@ function buildStyle({ nonce }: { nonce?: string }) {
       transition: none !important;
     }
   </style>
-  `;
-}
+  `);
 
-function buildScript({
-  nonce,
-  fallback,
-  attribute,
-  storageKey,
-  colorScheme,
-}: {
-  nonce?: string;
-  fallback: Theme;
-  attribute: string;
-  storageKey: string;
-  colorScheme: boolean;
-}) {
-  return `
-  <script ${assignNonce(nonce)}>
+  return {
+    get current() {
+      return current;
+    },
+  };
+};
+
+createTheme.buildScript = function (props: CreateThemeProps) {
+  const config = $derived({
+    ...defaultProps,
+    ...props,
+  });
+
+  const current = $derived(`
+  <script ${assignNonce(config.nonce)}>
     (function(k, a, f, c) {
       const h = document.documentElement;
       const q = window.matchMedia('(prefers-color-scheme: dark)')
@@ -206,14 +193,20 @@ function buildScript({
 
       if (c) h.style.colorScheme = t;
     })(
-      '${storageKey}',
-      '${attribute}',
-      '${fallback}',
-      ${colorScheme},
+      '${config.storageKey}',
+      '${config.attribute}',
+      '${config.fallback}',
+      ${config.colorScheme},
     );
   </script>
-  `;
-}
+  `);
+
+  return {
+    get current() {
+      return current;
+    },
+  };
+};
 
 function assignNonce(nonce?: string) {
   return nonce ? `nonce="${nonce}"` : '';

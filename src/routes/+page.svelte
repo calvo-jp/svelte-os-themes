@@ -1,7 +1,6 @@
 <script lang="ts">
-  import { useTheme } from '$lib/index.js';
+  import {useTheme} from '$lib/index.js';
   import Button from './button.svelte';
-  import { dataAttr } from './data-attr.js';
 
   let theme = useTheme();
 </script>
@@ -18,27 +17,16 @@
       <pre>{JSON.stringify($state.snapshot(theme), null, 2)}</pre>
     </code>
 
-    <div
-      class="mt-6 w-full space-y-4 lg:flex lg:max-w-lg lg:space-y-0 lg:gap-4"
-    >
-      <Button
-        onclick={() => (theme.value = 'light')}
-        data-selected={dataAttr(theme.value === 'light')}
-      >
+    <div class="mt-6 w-full space-y-4 lg:flex lg:max-w-lg lg:space-y-0 lg:gap-4">
+      <Button {...theme.getTriggerProps({value: 'light'})}>
         {@render sun()}
         <span>Light</span>
       </Button>
-      <Button
-        onclick={() => (theme.value = 'dark')}
-        data-selected={dataAttr(theme.value === 'dark')}
-      >
+      <Button {...theme.getTriggerProps({value: 'dark'})}>
         {@render moon()}
         <span>Dark</span>
       </Button>
-      <Button
-        onclick={() => (theme.value = 'system')}
-        data-selected={dataAttr(theme.value === 'system')}
-      >
+      <Button {...theme.getTriggerProps({value: 'system'})}>
         {@render laptop()}
         <span>System</span>
       </Button>

@@ -13,9 +13,9 @@ npm install svelte-os-themes
 ```svelte
 <!-- +layout.svelte -->
 <script>
-  import { ThemeProvider } from 'svelte-os-themes';
+  import {ThemeProvider} from 'svelte-os-themes';
 
-  let { children } = $props();
+  let {children} = $props();
 </script>
 
 <ThemeProvider
@@ -33,38 +33,14 @@ npm install svelte-os-themes
 ```svelte
 <!-- +page.svelte -->
 <script>
-  import { useTheme } from 'svelte-os-themes';
+  import {useTheme} from 'svelte-os-themes';
 
   let theme = useTheme();
 </script>
 
-<button
-  type="button"
-  onclick={function () {
-    theme.value = 'light';
-  }}
-  data-selected={theme.value === 'light'}
->
-  Light
-</button>
-<button
-  type="button"
-  onclick={function () {
-    theme.value = 'dark';
-  }}
-  data-selected={theme.value === 'dark'}
->
-  Dark
-</button>
-<button
-  type="button"
-  onclick={function () {
-    theme.value = 'system';
-  }}
-  data-selected={theme.value === 'system'}
->
-  System
-</button>
+<button {...theme.getTriggerProps({value: 'light'})}>Light</button>
+<button {...theme.getTriggerProps({value: 'dark'})}>Dark</button>
+<button {...theme.getTriggerProps({value: 'system'})}>System</button>
 ```
 
 ## API
@@ -120,6 +96,20 @@ npm install svelte-os-themes
 - `value`
 
   Returns the current theme when used as a getter and sets the theme when used as a setter.
+
+- `getTriggerProps`
+
+  Returns attributes for button to be used to trigger a particular theme. eg:
+
+  ```svelte
+  <script>
+    import {useTheme} from 'svelte-os-themes';
+
+    let theme = useTheme();
+  </script>
+
+  <button {...theme.getTriggerProps({value: 'light'})}>Light</button>
+  ```
 
 ### parseTheme
 

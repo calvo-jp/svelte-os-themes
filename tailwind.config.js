@@ -7,7 +7,8 @@ export default {
   theme: {
     extend: {
       data: {
-        selected: 'selected',
+        on: 'state="on"',
+        off: 'state="off"',
       },
       fontFamily: {
         sans: ["'Inter'", ...defaultTheme.fontFamily.sans],
