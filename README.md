@@ -111,6 +111,29 @@ npm install svelte-os-themes
   <button {...theme.getTriggerProps({value: 'light'})}>Light</button>
   ```
 
+  or set value to auto
+
+  ```svelte
+  <script>
+    import {useTheme} from 'svelte-os-themes';
+
+    let theme = useTheme();
+  </script>
+
+  <button
+    {...theme.getTriggerProps({
+      value: 'auto',
+      sequence: ['light', 'dark'],
+    })}
+  >
+    {#if theme.value === 'light'}
+      Go dark
+    {:else if theme.value === 'dark'}
+      Go light
+    {/if}
+  </button>
+  ```
+
 ### parseTheme
 
 `parseTheme` is a helper function that parses any value into a valid theme. See example below

@@ -3,17 +3,41 @@ import {parseTheme} from './parse-theme.js';
 import type {Theme} from './types.js';
 
 export interface CreateThemeProps {
+  /**
+   * @default 'system'
+   */
   fallback?: Theme;
+  /**
+   * @default 'class'
+   */
   attribute?: 'class' | `data-${string}`;
+  /**
+   * @default 'theme'
+   */
   storageKey?: string;
+  /**
+   * @default false
+   */
   system?: boolean;
+  /**
+   * @default true
+   */
   colorScheme?: boolean;
   nonce?: string;
 }
 
-interface TriggerProps {
-  value: Theme;
-}
+type TriggerProps =
+  | {
+      value: Theme;
+    }
+  | {
+      value: 'auto';
+      /**
+       * @default
+       * ['light', 'dark', 'system']
+       */
+      sequence?: Theme[];
+    };
 
 export interface CreateThemeReturn {
   get value(): Theme;
@@ -25,7 +49,7 @@ const defaultProps = {
   fallback: 'system',
   attribute: 'class',
   storageKey: 'theme',
-  system: true,
+  system: false,
   colorScheme: true,
 } satisfies CreateThemeProps;
 
@@ -38,13 +62,35 @@ export function createTheme(props: CreateThemeProps): CreateThemeReturn {
   let theme = $state(config.fallback);
 
   function getTriggerProps(props: TriggerProps): HTMLButtonAttributes {
+    if (props.value !== 'auto') {
+      return {
+        type: 'button',
+        onclick() {
+          theme = props.value;
+        },
+        'aria-label': 'Enable %s mode'.replace('%s', props.value),
+        'data-state': theme === props.value ? 'on' : 'off',
+      };
+    }
+
+    const defaultSequence: Theme[] = [
+      /**/
+      'light',
+      'dark',
+      'system',
+    ];
+
+    const sequence = props.sequence?.length ? props.sequence : defaultSequence;
+    const currIndex = sequence.indexOf(theme);
+    const nextIndex = currIndex + 1 < sequence.length ? currIndex + 1 : 0;
+    const nextTheme = sequence[nextIndex];
+
     return {
       type: 'button',
       onclick() {
-        theme = props.value;
+        theme = nextTheme;
       },
-      'aria-label': 'Enable %s mode'.replace('%s', props.value),
-      'data-state': theme === props.value ? 'on' : 'off',
+      'aria-label': 'Enable %s mode'.replace('%s', nextTheme),
     };
   }
 
