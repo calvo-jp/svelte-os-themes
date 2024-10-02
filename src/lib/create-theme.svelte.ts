@@ -35,88 +35,83 @@ export function createTheme(props: CreateThemeProps): CreateThemeReturn {
     ...props,
   });
 
-  let theme = $state<Theme>(config.fallback);
-
-  const effects = $derived({
-    setup() {
-      theme = parseTheme(window.localStorage.getItem(config.storageKey), config.fallback);
-    },
-    themeChanged() {
-      const html = document.documentElement;
-
-      html.classList.add('svelte-os-themes__no-transition');
-
-      const originalTheme = theme;
-      const resolvedTheme =
-        originalTheme === 'system'
-          ? window.matchMedia('(prefers-color-scheme: dark)').matches
-            ? 'dark'
-            : 'light'
-          : originalTheme;
-
-      if (config.attribute === 'class') {
-        const removeClass = resolvedTheme === 'dark' ? 'light' : 'dark';
-
-        html.classList.remove(removeClass);
-        html.classList.add(resolvedTheme);
-      } else {
-        html.setAttribute(config.attribute, resolvedTheme);
-      }
-
-      if (config.colorScheme) html.style.colorScheme = resolvedTheme;
-
-      window.localStorage.setItem(config.storageKey, originalTheme);
-
-      setTimeout(() => {
-        html.classList.remove('svelte-os-themes__no-transition');
-      }, 1);
-    },
-    osThemeChanged() {
-      if (!config.system) return function noop() {};
-
-      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-
-      function handler(e: MediaQueryListEvent) {
-        theme = e.matches ? 'dark' : 'light';
-      }
-
-      mediaQuery.addEventListener('change', handler);
-
-      return () => {
-        mediaQuery.removeEventListener('change', handler);
-      };
-    },
-    storageChanged() {
-      function handler(e: StorageEvent) {
-        if (e.key === config.storageKey) {
-          theme = parseTheme(e.newValue, config.fallback);
-        }
-      }
-
-      window.addEventListener('storage', handler);
-
-      return () => {
-        window.removeEventListener('storage', handler);
-      };
-    },
-  });
-
-  $effect(effects.setup);
-  $effect(effects.themeChanged);
-  $effect(effects.osThemeChanged);
-  $effect(effects.storageChanged);
+  let theme = $state(config.fallback);
 
   function getTriggerProps(props: TriggerProps): HTMLButtonAttributes {
     return {
       type: 'button',
       onclick() {
-        if (theme === props.value) return;
         theme = props.value;
       },
       'aria-label': 'Enable %s mode'.replace('%s', props.value),
       'data-state': theme === props.value ? 'on' : 'off',
     };
   }
+
+  $effect(function setup() {
+    theme = parseTheme(window.localStorage.getItem(config.storageKey), config.fallback);
+  });
+
+  $effect(function themeChanged() {
+    const html = document.documentElement;
+
+    html.classList.add('svelte-os-themes__no-transition');
+
+    const originalTheme = theme;
+    const resolvedTheme =
+      originalTheme === 'system'
+        ? window.matchMedia('(prefers-color-scheme: dark)').matches
+          ? 'dark'
+          : 'light'
+        : originalTheme;
+
+    if (config.attribute === 'class') {
+      const removeClass = resolvedTheme === 'dark' ? 'light' : 'dark';
+
+      html.classList.remove(removeClass);
+      html.classList.add(resolvedTheme);
+    } else {
+      html.setAttribute(config.attribute, resolvedTheme);
+    }
+
+    if (config.colorScheme) html.style.colorScheme = resolvedTheme;
+
+    window.localStorage.setItem(config.storageKey, originalTheme);
+
+    setTimeout(() => {
+      html.classList.remove('svelte-os-themes__no-transition');
+    }, 1);
+  });
+
+  $effect(function osThemeChanged() {
+    if (!config.system) return function noop() {};
+
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+    function handler(e: MediaQueryListEvent) {
+      theme = e.matches ? 'dark' : 'light';
+    }
+
+    mediaQuery.addEventListener('change', handler);
+
+    return () => {
+      mediaQuery.removeEventListener('change', handler);
+    };
+  });
+
+  $effect(function storageChanged() {
+    function handler(e: StorageEvent) {
+      if (e.key === config.storageKey) {
+        theme = parseTheme(e.newValue, config.fallback);
+      }
+    }
+
+    window.addEventListener('storage', handler);
+
+    return () => {
+      window.removeEventListener('storage', handler);
+    };
+  });
 
   return {
     get value(): Theme {
@@ -133,13 +128,13 @@ export function createTheme(props: CreateThemeProps): CreateThemeReturn {
   };
 }
 
-createTheme.buildStyle = function (props: CreateThemeProps) {
+createTheme.style = function (props: CreateThemeProps) {
   const config = $derived({
     ...defaultProps,
     ...props,
   });
 
-  const current = $derived(`
+  const value = $derived(`
   <style ${assignNonce(config.nonce)}>
     .svelte-os-themes__no-transition,
     .svelte-os-themes__no-transition *,
@@ -154,19 +149,19 @@ createTheme.buildStyle = function (props: CreateThemeProps) {
   `);
 
   return {
-    get current() {
-      return current;
+    get value() {
+      return value;
     },
   };
 };
 
-createTheme.buildScript = function (props: CreateThemeProps) {
+createTheme.script = function (props: CreateThemeProps) {
   const config = $derived({
     ...defaultProps,
     ...props,
   });
 
-  const current = $derived(`
+  const value = $derived(`
   <script ${assignNonce(config.nonce)}>
     (function(k, a, f, c) {
       const h = document.documentElement;
@@ -202,8 +197,8 @@ createTheme.buildScript = function (props: CreateThemeProps) {
   `);
 
   return {
-    get current() {
-      return current;
+    get value() {
+      return value;
     },
   };
 };

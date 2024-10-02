@@ -13,8 +13,8 @@
   let {children, ...props}: ThemeProviderProps = $props();
 
   let theme = createTheme(props);
-  let script = createTheme.buildScript(props);
-  let style = createTheme.buildStyle(props);
+  let script = createTheme.script(props);
+  let style = createTheme.style(props);
 
   setContext('theme', theme);
 </script>
@@ -22,6 +22,6 @@
 {@render children?.(theme)}
 
 <svelte:head>
-  {@html style.current}
-  {@html script.current}
+  {@html style.value}
+  {@html script.value}
 </svelte:head>
