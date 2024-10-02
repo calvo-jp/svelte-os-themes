@@ -11,7 +11,7 @@ function renderComponent(props?: CreateThemeProps) {
   );
 }
 
-describe('ThemeProvider is properly working', () => {
+describe("'ThemeProvider' is properly working", () => {
   afterEach(() => {
     cleanup();
   });
