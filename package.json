@@ -2,7 +2,7 @@
   "name": "svelte-os-themes",
   "type": "module",
   "license": "MIT",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "main": "./dist/index.js",
   "svelte": "./dist/index.js",
   "types": "./dist/index.d.ts",
