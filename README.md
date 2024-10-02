@@ -1,6 +1,6 @@
 # Svelte OS Themes
 
-Easier theme switching for `Svelte` apps.
+[Svelte](https://svelte.dev/) 5 theme helper.
 
 ## Installation
 
