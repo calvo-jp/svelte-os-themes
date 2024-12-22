@@ -1,7 +1,9 @@
 import {getContext} from 'svelte';
 import type {CreateThemeReturn} from './create-theme.svelte.js';
 
-export function useTheme() {
+export interface UseThemeReturn extends CreateThemeReturn {}
+
+export function useTheme(): UseThemeReturn {
   const context = getContext<CreateThemeReturn>('theme');
 
   if (!context) {

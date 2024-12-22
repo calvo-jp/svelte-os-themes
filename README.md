@@ -36,11 +36,34 @@ npm install svelte-os-themes
   import {useTheme} from 'svelte-os-themes';
 
   let theme = useTheme();
+
+  $inspect(theme.current);
 </script>
 
-<button {...theme.getTriggerProps({value: 'light'})}>Light</button>
-<button {...theme.getTriggerProps({value: 'dark'})}>Dark</button>
-<button {...theme.getTriggerProps({value: 'system'})}>System</button>
+<button
+  type="button"
+  onclick={function () {
+    theme.current = 'light';
+  }}
+>
+  Light
+</button>
+<button
+  type="button"
+  onclick={function () {
+    theme.current = 'dark';
+  }}
+>
+  Dark
+</button>
+<button
+  type="button"
+  onclick={function () {
+    theme.current = 'system';
+  }}
+>
+  System
+</button>
 ```
 
 ## API
@@ -93,9 +116,44 @@ npm install svelte-os-themes
 
 `useTheme` does not accept any arguments and returns an object with the following properties:
 
-- `value`
+- `current`
 
   Returns the current theme when used as a getter and sets the theme when used as a setter.
+
+  ```svelte
+  <script>
+    import {useTheme} from 'svelte-os-themes';
+
+    let theme = useTheme();
+  </script>
+
+  <div>Current Theme: {theme.current}</div>
+
+  <button
+    type="button"
+    onclick={function () {
+      theme.current = 'light';
+    }}
+  >
+    Light
+  </button>
+  <button
+    type="button"
+    onclick={function () {
+      theme.current = 'light';
+    }}
+  >
+    Dark
+  </button>
+  <button
+    type="button"
+    onclick={function () {
+      theme.current = 'light';
+    }}
+  >
+    System
+  </button>
+  ```
 
 - `getTriggerProps`
 
@@ -109,6 +167,8 @@ npm install svelte-os-themes
   </script>
 
   <button {...theme.getTriggerProps({value: 'light'})}>Light</button>
+  <button {...theme.getTriggerProps({value: 'dark'})}>Dark</button>
+  <button {...theme.getTriggerProps({value: 'system'})}>System</button>
   ```
 
   or set value to auto

@@ -26,7 +26,7 @@ export interface CreateThemeProps {
   nonce?: string;
 }
 
-type TriggerProps =
+export type ThemeTriggerProps =
   | {
       value: Theme;
     }
@@ -40,9 +40,9 @@ type TriggerProps =
     };
 
 export interface CreateThemeReturn {
-  get value(): Theme;
-  set value(value: Theme | null | undefined);
-  getTriggerProps(props: TriggerProps): HTMLButtonAttributes;
+  get current(): Theme;
+  set current(value: Theme | null | undefined);
+  getTriggerProps(props: ThemeTriggerProps): HTMLButtonAttributes;
 }
 
 const defaultProps = {
@@ -61,7 +61,7 @@ export function createTheme(props: CreateThemeProps): CreateThemeReturn {
 
   let theme = $state(config.fallback);
 
-  function getTriggerProps(props: TriggerProps): HTMLButtonAttributes {
+  function getTriggerProps(props: ThemeTriggerProps): HTMLButtonAttributes {
     if (props.value !== 'auto') {
       return {
         type: 'button',
@@ -70,6 +70,7 @@ export function createTheme(props: CreateThemeProps): CreateThemeReturn {
         },
         'aria-label': 'Enable %s mode'.replace('%s', props.value),
         'data-state': theme === props.value ? 'on' : 'off',
+        'data-value': props.value,
       };
     }
 
@@ -91,6 +92,7 @@ export function createTheme(props: CreateThemeProps): CreateThemeReturn {
         theme = nextTheme;
       },
       'aria-label': 'Enable %s mode'.replace('%s', nextTheme),
+      'data-value': props.value,
     };
   }
 
@@ -160,10 +162,10 @@ export function createTheme(props: CreateThemeProps): CreateThemeReturn {
   });
 
   return {
-    get value(): Theme {
+    get current(): Theme {
       return theme;
     },
-    set value(newTheme: Theme | null | undefined) {
+    set current(newTheme: Theme | null | undefined) {
       if (newTheme) {
         theme = newTheme;
       } else {
