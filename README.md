@@ -96,7 +96,7 @@ npm install svelte-os-themes
   Whether to change theme when os theme changes.
 
   accepted values: `true`, `false`<br/>
-  default value: `true`
+  default value: `false`
 
 - `colorScheme`
 
