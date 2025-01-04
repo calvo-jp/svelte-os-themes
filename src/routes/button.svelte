@@ -1,13 +1,12 @@
 <script lang="ts">
   import type {SvelteHTMLElements} from 'svelte/elements';
-  import {cx} from './cx.js';
 
   let {children, class: className, ...props}: SvelteHTMLElements['button'] = $props();
 </script>
 
 <button
   type="button"
-  class={cx(
+  class={[
     'border',
     'h-11',
     'w-full',
@@ -30,7 +29,7 @@
     'dark:data-on:border-amber-700',
     'dark:data-on:text-amber-700',
     className,
-  )}
+  ]}
   {...props}
 >
   {@render children?.()}

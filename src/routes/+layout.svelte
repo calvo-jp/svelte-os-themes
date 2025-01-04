@@ -1,5 +1,5 @@
 <script lang="ts">
-  import ThemeProvider from '$lib/theme-provider.svelte';
+  import {ThemeProvider} from '$lib/index.js';
   import '../app.css';
 
   let {children} = $props();

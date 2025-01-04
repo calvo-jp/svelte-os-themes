@@ -3,7 +3,13 @@ import {svelteTesting} from '@testing-library/svelte/vite';
 import {defineConfig} from 'vitest/config';
 
 export default defineConfig({
-  plugins: [sveltekit(), svelteTesting()],
+  plugins: [
+    sveltekit(),
+    svelteTesting({
+      autoCleanup: true,
+      resolveBrowser: true,
+    }),
+  ],
   server: {
     port: 3000,
   },
@@ -12,7 +18,7 @@ export default defineConfig({
     globals: true,
     include: ['src/**/*.{test,spec}.{js,ts}'],
     environment: 'jsdom',
-    setupFiles: ['vitest-setup.ts'],
+    setupFiles: ['vitest.setup.ts'],
     passWithNoTests: true,
   },
 });

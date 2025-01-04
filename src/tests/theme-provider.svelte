@@ -1,8 +1,7 @@
 <script lang="ts">
-  import type {CreateThemeProps} from '$lib/create-theme.svelte.js';
-  import ThemeProvider from '$lib/theme-provider.svelte';
+  import {ThemeProvider, type ThemeProviderProps} from '$lib/index.js';
 
-  let {...props}: CreateThemeProps = $props();
+  let {...props}: ThemeProviderProps = $props();
 </script>
 
 <ThemeProvider {...props}>

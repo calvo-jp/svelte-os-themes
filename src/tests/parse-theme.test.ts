@@ -1,5 +1,5 @@
+import {parseTheme} from '$lib/index.js';
 import {expect, test} from 'vitest';
-import {parseTheme} from '../lib/parse-theme.js';
 
 test("'parseTheme' is working", () => {
   expect(parseTheme(0, 'system')).toBe('system');

@@ -1,106 +1,87 @@
-import {cleanup, render} from '@testing-library/svelte';
+import {render} from '@testing-library/svelte';
 import {userEvent} from '@testing-library/user-event';
-import type {ComponentType, SvelteComponent} from 'svelte';
-import type {CreateThemeProps} from '../lib/create-theme.svelte.js';
 import Component from './theme-provider.svelte';
 
-function renderComponent(props?: CreateThemeProps) {
-  return render<SvelteComponent<CreateThemeProps>>(
-    Component as unknown as ComponentType<SvelteComponent<CreateThemeProps>>,
-    {props},
-  );
-}
-
-/* FIXME: fails after upgrading svelte */
-describe.skip("'ThemeProvider' is properly working", () => {
-  afterEach(() => {
-    cleanup();
-  });
-
+describe("'ThemeProvider' is properly working", () => {
   it('renders its children', async () => {
-    const {findByRole} = renderComponent();
+    const ui = render(Component);
 
-    expect(await findByRole('button', {name: 'Enable light mode'})).toBeInTheDocument();
-    expect(await findByRole('button', {name: 'Enable dark mode'})).toBeInTheDocument();
-    expect(await findByRole('button', {name: 'Enable system mode'})).toBeInTheDocument();
+    expect(await ui.findByRole('button', {name: 'Enable light mode'})).toBeInTheDocument();
+    expect(await ui.findByRole('button', {name: 'Enable dark mode'})).toBeInTheDocument();
+    expect(await ui.findByRole('button', {name: 'Enable system mode'})).toBeInTheDocument();
   });
 });
 
-/* FIXME: fails after upgrading svelte */
-describe.skip('Theme store is properly working', () => {
-  afterEach(() => {
-    cleanup();
-  });
-
+describe('Theme store is properly working', () => {
   it('can change theme to dark mode', async () => {
-    const {getByRole} = renderComponent();
-    const {click} = userEvent.setup();
+    const ui = render(Component);
+    const user = userEvent.setup();
 
-    await click(getByRole('button', {name: 'Enable dark mode'}));
+    await user.click(await ui.findByRole('button', {name: 'Enable dark mode'}));
 
     expect(document.documentElement).toHaveClass('dark');
     expect(window.localStorage.getItem('theme')).toBe('dark');
   });
 
   it('can change theme to light mode', async () => {
-    const {getByRole} = renderComponent();
-    const {click} = userEvent.setup();
+    const ui = render(Component);
+    const user = userEvent.setup();
 
-    await click(getByRole('button', {name: 'Enable light mode'}));
+    await user.click(await ui.findByRole('button', {name: 'Enable light mode'}));
 
     expect(document.documentElement).toHaveClass('light');
     expect(window.localStorage.getItem('theme')).toBe('light');
   });
 
   it('can change theme to system mode', async () => {
-    const {getByRole} = renderComponent();
-    const {click} = userEvent.setup();
+    const ui = render(Component);
+    const user = userEvent.setup();
 
-    await click(getByRole('button', {name: 'Enable system mode'}));
+    await user.click(await ui.findByRole('button', {name: 'Enable system mode'}));
 
     expect(document.documentElement).toHaveClass('dark');
     expect(window.localStorage.getItem('theme')).toBe('system');
   });
 
   it('can set nonce for script and style', async () => {
-    renderComponent({nonce: 'nonce'});
+    render(Component, {nonce: 'nonce'});
 
     expect(document.querySelector(`script[nonce='nonce']`)).toBeDefined();
     expect(document.querySelector(`style[nonce='nonce']`)).toBeDefined();
   });
 
   it('can set custom localStorage key', async () => {
-    const {getByRole} = renderComponent({storageKey: 'customKey'});
+    const ui = render(Component, {storageKey: 'customKey'});
 
-    const {click} = userEvent.setup();
+    const user = userEvent.setup();
 
-    await click(getByRole('button', {name: 'Enable system mode'}));
+    await user.click(await ui.findByRole('button', {name: 'Enable system mode'}));
 
     expect(window.localStorage.getItem('customKey')).toBe('system');
   });
 
   it('can set custom document attribute besides class', async () => {
-    const {getByRole} = renderComponent({attribute: 'data-theme'});
-    const {click} = userEvent.setup();
+    const ui = render(Component, {attribute: 'data-theme'});
+    const user = userEvent.setup();
 
-    await click(getByRole('button', {name: 'Enable light mode'}));
+    await user.click(await ui.findByRole('button', {name: 'Enable light mode'}));
 
     expect(document.documentElement).toHaveAttribute('data-theme', 'light');
   });
 
   it('adds color scheme to document', async () => {
-    const {getByRole} = renderComponent();
-    const {click} = userEvent.setup();
+    const ui = render(Component);
+    const user = userEvent.setup();
 
-    await click(getByRole('button', {name: 'Enable dark mode'}));
+    await user.click(await ui.findByRole('button', {name: 'Enable dark mode'}));
     expect(document.documentElement).toHaveStyle({colorScheme: 'dark'});
 
-    await click(getByRole('button', {name: 'Enable light mode'}));
+    await user.click(await ui.findByRole('button', {name: 'Enable light mode'}));
     expect(document.documentElement).toHaveStyle({colorScheme: 'light'});
   });
 
   it('can set fallback theme', async () => {
-    renderComponent({fallback: 'light'});
+    render(Component, {fallback: 'light'});
     expect(document.documentElement).toHaveClass('light');
     expect(window.localStorage.getItem('theme')).toBe('light');
   });

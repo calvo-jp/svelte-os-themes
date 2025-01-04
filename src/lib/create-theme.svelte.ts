@@ -1,6 +1,7 @@
 import type {HTMLButtonAttributes} from 'svelte/elements';
 import {parseTheme} from './parse-theme.js';
-import type {Theme} from './types.js';
+
+export type Theme = 'dark' | 'light' | 'system';
 
 export interface CreateThemeProps {
   /**
