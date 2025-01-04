@@ -186,9 +186,9 @@ npm install svelte-os-themes
       sequence: ['light', 'dark'],
     })}
   >
-    {#if theme.value === 'light'}
+    {#if theme.current === 'light'}
       Go dark
-    {:else if theme.value === 'dark'}
+    {:else if theme.current === 'dark'}
       Go light
     {/if}
   </button>
