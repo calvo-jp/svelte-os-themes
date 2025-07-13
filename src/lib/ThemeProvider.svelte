@@ -1,14 +1,14 @@
 <script lang="ts" module>
-  import type {CreateThemeProps, CreateThemeReturn} from './create-theme.svelte.js';
+  import type {CreateThemeOptions} from './createTheme.svelte.js';
 
-  export interface ThemeProviderProps extends CreateThemeProps {
-    children?: Snippet<[CreateThemeReturn]>;
+  export interface ThemeProviderProps extends CreateThemeOptions {
+    children?: Snippet;
   }
 </script>
 
 <script lang="ts">
   import {setContext, type Snippet} from 'svelte';
-  import {createTheme} from './create-theme.svelte.js';
+  import {createTheme, type CreateThemeReturn} from './createTheme.svelte.js';
 
   let {children, ...props}: ThemeProviderProps = $props();
 
@@ -16,12 +16,12 @@
   let script = createTheme.script(props);
   let style = createTheme.style(props);
 
-  setContext('theme', theme);
+  setContext<CreateThemeReturn>('theme', theme);
 </script>
-
-{@render children?.(theme)}
 
 <svelte:head>
   {@html style.value}
   {@html script.value}
 </svelte:head>
+
+{@render children?.()}

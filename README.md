@@ -105,9 +105,16 @@ npm install svelte-os-themes
   accepted values: `true`, `false`<br/>
   default value: `true`
 
-- `nonce`
+- `scriptNonce`
 
   The nonce to use for script.
+
+  accepted values: `<string>`<br/>
+  default value:
+
+- `styleNonce`
+
+  The nonce to use for style.
 
   accepted values: `<string>`<br/>
   default value:

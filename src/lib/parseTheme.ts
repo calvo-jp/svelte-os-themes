@@ -1,4 +1,4 @@
-import type {Theme} from './create-theme.svelte.js';
+import type {Theme} from './types.js';
 
 /**
  * Parses string to theme

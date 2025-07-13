@@ -5,6 +5,6 @@
   let {children} = $props();
 </script>
 
-<ThemeProvider attribute="data-theme" storageKey="svelte-os-themes">
+<ThemeProvider>
   {@render children()}
 </ThemeProvider>

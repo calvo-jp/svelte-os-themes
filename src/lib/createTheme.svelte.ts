@@ -1,36 +1,39 @@
 import type {HTMLButtonAttributes} from 'svelte/elements';
-import {parseTheme} from './parse-theme.js';
+import {parseTheme} from './parseTheme.js';
+import type {Theme} from './types.js';
 
-export type Theme = 'dark' | 'light' | 'system';
-
-export interface CreateThemeProps {
+export interface CreateThemeOptions {
   /**
+   * @description The fallback theme to use when no theme is set in localStorage.
    * @default 'system'
    */
   fallback?: Theme;
   /**
+   * @description The attribute used to set the theme on the `<html>` element.
    * @default 'class'
    */
   attribute?: 'class' | `data-${string}`;
   /**
+   * @description The key used to store the theme in localStorage.
    * @default 'theme'
    */
   storageKey?: string;
   /**
+   * @description Whether to listen for changes in the OS theme.
    * @default false
    */
   system?: boolean;
   /**
+   * @description Whether to set the `color-scheme` CSS property on the `<html>` element.
    * @default true
    */
   colorScheme?: boolean;
-  nonce?: string;
+  styleNonce?: string;
+  scriptNonce?: string;
 }
 
 export type ThemeTriggerProps =
-  | {
-      value: Theme;
-    }
+  | {value: Theme}
   | {
       value: 'auto';
       /**
@@ -46,18 +49,18 @@ export interface CreateThemeReturn {
   getTriggerProps(props: ThemeTriggerProps): HTMLButtonAttributes;
 }
 
-const defaultProps = {
+const defaultOptions = {
   fallback: 'system',
   attribute: 'class',
   storageKey: 'theme',
   system: false,
   colorScheme: true,
-} satisfies CreateThemeProps;
+} satisfies CreateThemeOptions;
 
-export function createTheme(props: CreateThemeProps): CreateThemeReturn {
+export function createTheme(options: CreateThemeOptions): CreateThemeReturn {
   const config = $derived({
-    ...defaultProps,
-    ...props,
+    ...defaultOptions,
+    ...options,
   });
 
   let theme = $state(config.fallback);
@@ -97,11 +100,11 @@ export function createTheme(props: CreateThemeProps): CreateThemeReturn {
     };
   }
 
-  $effect(function setup() {
+  $effect(() => {
     theme = parseTheme(window.localStorage.getItem(config.storageKey), config.fallback);
   });
 
-  $effect(function themeChanged() {
+  $effect(() => {
     const html = document.documentElement;
 
     html.classList.add('svelte-os-themes__no-transition');
@@ -132,33 +135,32 @@ export function createTheme(props: CreateThemeProps): CreateThemeReturn {
     }, 1);
   });
 
-  $effect(function osThemeChanged() {
+  $effect(() => {
     if (!config.system) return function noop() {};
 
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-
-    function handler(e: MediaQueryListEvent) {
+    const handleChange = (e: MediaQueryListEvent) => {
       theme = e.matches ? 'dark' : 'light';
-    }
+    };
 
-    mediaQuery.addEventListener('change', handler);
+    mediaQuery.addEventListener('change', handleChange);
 
     return () => {
-      mediaQuery.removeEventListener('change', handler);
+      mediaQuery.removeEventListener('change', handleChange);
     };
   });
 
-  $effect(function storageChanged() {
-    function handler(e: StorageEvent) {
+  $effect(() => {
+    const handleChange = (e: StorageEvent) => {
       if (e.key === config.storageKey) {
         theme = parseTheme(e.newValue, config.fallback);
       }
-    }
+    };
 
-    window.addEventListener('storage', handler);
+    window.addEventListener('storage', handleChange);
 
     return () => {
-      window.removeEventListener('storage', handler);
+      window.removeEventListener('storage', handleChange);
     };
   });
 
@@ -177,14 +179,14 @@ export function createTheme(props: CreateThemeProps): CreateThemeReturn {
   };
 }
 
-createTheme.style = function (props: CreateThemeProps) {
+createTheme.style = function (props: CreateThemeOptions) {
   const config = $derived({
-    ...defaultProps,
+    ...defaultOptions,
     ...props,
   });
 
   const value = $derived(`
-  <style ${assignNonce(config.nonce)}>
+  <style ${assignNonce(config.styleNonce)}>
     .svelte-os-themes__no-transition,
     .svelte-os-themes__no-transition *,
     .svelte-os-themes__no-transition *::after,
@@ -204,14 +206,14 @@ createTheme.style = function (props: CreateThemeProps) {
   };
 };
 
-createTheme.script = function (props: CreateThemeProps) {
+createTheme.script = function (props: CreateThemeOptions) {
   const config = $derived({
-    ...defaultProps,
+    ...defaultOptions,
     ...props,
   });
 
   const value = $derived(`
-  <script ${assignNonce(config.nonce)}>
+  <script ${assignNonce(config.scriptNonce)}>
     (function(k, a, f, c) {
       const h = document.documentElement;
       const q = window.matchMedia('(prefers-color-scheme: dark)')
